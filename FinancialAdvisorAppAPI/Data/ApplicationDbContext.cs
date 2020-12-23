@@ -13,7 +13,7 @@ namespace FinancialAdvisorAppAPI.Data
         public DbSet<Author> Authors { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<FinanceType> FinanceTypes { get; set; }
-        public DbSet<FinancialStat> FinancialData { get; set; }
+        public DbSet<FinancialStat> FinancialStats { get; set; }
         public DbSet<FinancialGoal> FinancialGoals { get; set; }
         public DbSet<UserDetail> UserDetails { get; set; }
         public DbSet<UserGoal> UserGoals { get; set; }

@@ -2,12 +2,15 @@
 using FinancialAdvisorAppAPI.Data.Ref;
 using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinancialAdvisorAppAPI.Data.Users
 {
+    [Table("FinancialStats", Schema = "users")]
     public partial class FinancialStat
     {
+        [Key]
         public int FinanceId { get; set; }
         public string UserId { get; set; }
         public DateTime FinanceDate { get; set; }

@@ -2,13 +2,17 @@
 using FinancialAdvisorAppAPI.Data.Ref;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
 namespace FinancialAdvisorAppAPI.Data.Users
 {
+    [Table("UserGoals", Schema = "users")]
     public partial class UserGoal
     {
+        [Key]
         public int UserGoalId { get; set; }
         public string UserId { get; set; }
         public DateTime DueDate { get; set; }

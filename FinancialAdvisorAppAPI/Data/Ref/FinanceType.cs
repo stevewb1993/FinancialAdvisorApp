@@ -1,11 +1,14 @@
 ﻿using FinancialAdvisorAppAPI.Data.Users;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
 namespace FinancialAdvisorAppAPI.Data.Ref
 {
+    [Table("FinanceTypes", Schema ="Ref")]
     public partial class FinanceType
     {
         public FinanceType()
@@ -15,6 +18,7 @@ namespace FinancialAdvisorAppAPI.Data.Ref
             UserGoals = new HashSet<UserGoal>();
         }
 
+        [Key] 
         public int FinanceTypeId { get; set; }
         public string FinanceDesc { get; set; }
 
