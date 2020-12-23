@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialAdvisorAppUI", "FinancialAdvisorAppUI\FinancialAdvisorAppUI.csproj", "{53B9336D-C025-4F7A-AF41-29EF521B23F0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancialAdvisorAppAPI", "FinancialAdvisorAppAPI\FinancialAdvisorAppAPI.csproj", "{A117B810-E24B-4952-805F-5E8B5C38E0D1}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "FinancialAdvisorAppDB", "FinancialAdvisorAppDB\FinancialAdvisorAppDB.sqlproj", "{78A8806C-27F7-489A-AAC1-45564B972797}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{53B9336D-C025-4F7A-AF41-29EF521B23F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53B9336D-C025-4F7A-AF41-29EF521B23F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53B9336D-C025-4F7A-AF41-29EF521B23F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53B9336D-C025-4F7A-AF41-29EF521B23F0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A117B810-E24B-4952-805F-5E8B5C38E0D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A117B810-E24B-4952-805F-5E8B5C38E0D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A117B810-E24B-4952-805F-5E8B5C38E0D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A117B810-E24B-4952-805F-5E8B5C38E0D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78A8806C-27F7-489A-AAC1-45564B972797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78A8806C-27F7-489A-AAC1-45564B972797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78A8806C-27F7-489A-AAC1-45564B972797}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{78A8806C-27F7-489A-AAC1-45564B972797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78A8806C-27F7-489A-AAC1-45564B972797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78A8806C-27F7-489A-AAC1-45564B972797}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
