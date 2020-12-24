@@ -16,7 +16,7 @@ USING (VALUES
 	,(11, 'Total Monthly Expenses')
 	,(12, 'Necessary Monthly Expenses'))
 AS SOURCE ([FinanceTypeId], [FinanceDesc])
-ON TARGET.[FinanceTypeId] = Source.[FinanceTypeId]
+ON TARGET.Id = Source.[FinanceTypeId]
 WHEN NOT MATCHED BY TARGET THEN
-INSERT ([FinanceTypeId], [FinanceDesc]) 
+INSERT (Id, [FinanceDesc]) 
 VALUES ([FinanceTypeId], [FinanceDesc]);

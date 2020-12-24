@@ -19,7 +19,7 @@ namespace FinancialAdvisorAppAPI.Data.Ref
         }
 
         [Key] 
-        public int FinanceTypeId { get; set; }
+        public int Id { get; set; }
         public string FinanceDesc { get; set; }
 
         public virtual ICollection<FinancialStat> FinancialData { get; set; }

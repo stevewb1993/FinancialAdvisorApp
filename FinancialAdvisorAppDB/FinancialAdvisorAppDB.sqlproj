@@ -83,7 +83,9 @@
     <Build Include="users\Tables\UserGoals.sql" />
     <Build Include="ref\RefSchema.sql" />
     <Build Include="users\UsersSchema.sql" />
-    <Build Include="PostDeployment\PostDeployment.sql" />
     <Build Include="PostDeployment\Stored Procedures\PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="FinancialAdvisorAppDB.refactorlog" />
   </ItemGroup>
 </Project>

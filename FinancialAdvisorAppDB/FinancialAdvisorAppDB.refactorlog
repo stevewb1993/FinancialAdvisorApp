@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="ba7318e4-31a6-45d0-a046-6686b135bb2c" ChangeDateTime="12/23/2020 15:50:59">
+    <Property Name="ElementName" Value="[users].[FinancialStats].[FinanceId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[users].[FinancialStats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ab95ae57-ac3f-46ec-99d3-b8ead412c043" ChangeDateTime="12/23/2020 15:51:11">
+    <Property Name="ElementName" Value="[users].[FinancialGoals].[GoalId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[users].[FinancialGoals]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3f078dd8-9de4-405f-bc42-2651d2a087ec" ChangeDateTime="12/23/2020 15:51:24">
+    <Property Name="ElementName" Value="[users].[UserDetails].[UserId]" />m 
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[users].[UserDetails]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7afd3333-4cb9-468d-8203-4fc50b7645ef" ChangeDateTime="12/23/2020 15:51:35">
+    <Property Name="ElementName" Value="[users].[UserGoals].[UserGoalId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[users].[UserGoals]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ac2a07ed-58b3-4142-9107-edca8aefc126" ChangeDateTime="12/23/2020 15:51:57">
+    <Property Name="ElementName" Value="[ref].[FinanceTypes].[FinanceTypeId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[ref].[FinanceTypes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Id" />
+  </Operation>
+</Operations>

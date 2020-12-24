@@ -12,7 +12,7 @@ namespace FinancialAdvisorAppAPI.Data.Users
     public partial class UserDetail
     {
         [Key]
-        public string UserId { get; set; }
+        public string Id { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string HighestEducation { get; set; }
         public int RetirementAge { get; set; }

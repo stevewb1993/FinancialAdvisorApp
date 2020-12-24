@@ -11,7 +11,7 @@ namespace FinancialAdvisorAppAPI.Data.Users
     public partial class FinancialStat
     {
         [Key]
-        public int FinanceId { get; set; }
+        public int Id { get; set; }
         public string UserId { get; set; }
         public DateTime FinanceDate { get; set; }
         public int FinanceTypeId { get; set; }

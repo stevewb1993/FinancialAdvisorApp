@@ -36,25 +36,25 @@ namespace BookStore_API.Services
             return books;
         }
 
-        public async Task<Book> FindById(int id)
+        public async Task<Book> FindById(IComparable id)
         {
             var book = await _db.Books
                 .Include(q => q.Author)
-                .FirstOrDefaultAsync(q => q.Id == id);
+                .FirstOrDefaultAsync(q => q.Id.ToString() == id.ToString());
             return book;
         }
 
-        public async Task<string> GetImageFileName(int id)
+        public async Task<string> GetImageFileName(IComparable id)
         {
             var book = await _db.Books
                 .AsNoTracking()
-                .FirstOrDefaultAsync(q => q.Id == id);
+                .FirstOrDefaultAsync(q => q.Id.ToString() == id.ToString());
             return book.Image;
         }
 
-        public async Task<bool> isExists(int id)
+        public async Task<bool> isExists(IComparable id)
         {
-            var isExists = await _db.Books.AnyAsync(q => q.Id == id);
+            var isExists = await _db.Books.AnyAsync(q => q.Id.ToString() == id.ToString());
             return isExists;
         }
 
@@ -69,5 +69,6 @@ namespace BookStore_API.Services
             _db.Books.Update(entity);
             return await Save();
         }
+
     }
 }

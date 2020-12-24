@@ -36,17 +36,17 @@ namespace FinancialAdvisorAppAPI.Services
             return authors;
         }
 
-        public async Task<Author> FindById(int id)
+        public async Task<Author> FindById(IComparable id)
         {
             var author = await _db.Authors
                 .Include(q => q.Books)
-                .FirstOrDefaultAsync(q => q.Id == id);
+                .FirstOrDefaultAsync(q => q.Id.ToString() == id.ToString());
             return author;
         }
 
-        public async Task<bool> isExists(int id)
+        public async Task<bool> isExists(IComparable id)
         {
-            return await _db.Authors.AnyAsync(q => q.Id == id);
+            return await _db.Authors.AnyAsync(q => q.Id.ToString() == id.ToString());
         }
 
         public async Task<bool> Save()

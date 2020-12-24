@@ -13,7 +13,7 @@ namespace FinancialAdvisorAppAPI.Data.Users
     public partial class FinancialGoal
     {
         [Key]
-        public int GoalId { get; set; }
+        public int Id { get; set; }
         public string UserId { get; set; }
         public DateTime DueDate { get; set; }
         public int FinanceTypeId { get; set; }
