@@ -49,7 +49,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
             {
                 _logger.LogInfo($"{location}: Attempted Call for id: {userId}");
                 var goalList = await _goalRepository.FindAllByUserId(userId);
-                if (goalList == null)
+                if (goalList == null || goalList.Count == 0)
                 {
                     _logger.LogWarn($"{location}: Failed to retrieve record with id: {userId}");
                     return NotFound();

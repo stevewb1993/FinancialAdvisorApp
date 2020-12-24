@@ -12,7 +12,7 @@ namespace FinancialAdvisorAppAPI.Data.Users
     [Table("Goals", Schema = "users")]
     public partial class Goal : UserData
     {
-        
+
         public DateTime DueDate { get; set; }
         public string FinanceTypeId { get; set; }
         public decimal GoalValue { get; set; }

@@ -9,6 +9,6 @@ namespace FinancialAdvisorAppAPI.Contracts.Data
     public class ApplicationData
     {
         [Key]
-        public string Id;
+        public string Id { get; set; }
     }
 }
