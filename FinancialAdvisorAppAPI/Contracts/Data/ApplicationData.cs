@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppAPI.Contracts.Data
 {
-    public abstract class ApplicationData
+    public class ApplicationData
     {
-        public IComparable Id;
+        [Key]
+        public string Id;
     }
 }

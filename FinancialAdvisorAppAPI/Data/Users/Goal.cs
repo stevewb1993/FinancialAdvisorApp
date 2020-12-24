@@ -1,5 +1,4 @@
 ﻿using FinancialAdvisorAppAPI.Contracts.Data;
-using FinancialAdvisorAppAPI.Data.AspNet;
 using FinancialAdvisorAppAPI.Data.Ref;
 using System;
 using System.Collections.Generic;
@@ -13,11 +12,9 @@ namespace FinancialAdvisorAppAPI.Data.Users
     [Table("Goals", Schema = "users")]
     public partial class Goal : UserData
     {
-        [Key]
-        public int Id { get; set; }
-        public string UserId { get; set; }
+        
         public DateTime DueDate { get; set; }
-        public int FinanceTypeId { get; set; }
+        public string FinanceTypeId { get; set; }
         public decimal GoalValue { get; set; }
         public DateTime GoalStartDate { get; set; }
 

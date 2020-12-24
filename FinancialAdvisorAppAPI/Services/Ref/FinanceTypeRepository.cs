@@ -12,7 +12,7 @@ namespace FinancialAdvisorAppAPI.Services.Ref
 {
     public class FinanceTypeRepository : GenericRepository<FinanceType>, IFinanceTypeRepository
     {
-        public FinanceTypeRepository(ApplicationDbContext db) : base(db)
+        public FinanceTypeRepository(ApplicationDbContext db, DbSet<FinanceType> dbTable) : base(db, dbTable)
         {
 
         }

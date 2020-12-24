@@ -11,9 +11,10 @@ namespace FinancialAdvisorAppAPI.Services
 {
     public class GenericUserRepository<T> : GenericRepository<T>, IUserRepositoryBase<T> where T : UserData
     {
-        public GenericUserRepository(ApplicationDbContext db) : base(db)
+        public GenericUserRepository(ApplicationDbContext db, DbSet<T> dbTable) : base(db, dbTable)
         {
         }
+
 
         public async Task<IList<T>> FindAllByUserId(string userId)
         {

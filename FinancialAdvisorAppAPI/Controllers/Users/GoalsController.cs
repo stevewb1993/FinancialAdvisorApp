@@ -36,7 +36,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         /// <summary>
         /// Get financial goal by UserID
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="userId"></param>
         /// <returns>A users goals</returns>
         [HttpGet("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -55,7 +55,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
                     return NotFound();
                 }
 
-                var response = goalList.Select(x => _mapper.Map<GoalDTO>(x));  //_mapper.Map<GoalDTO>(goalList);
+                var response = _mapper.Map<IList<GoalDTO>>(goalList); 
                 _logger.LogInfo($"{location}: Successfully got record with id: {userId}");
                 return Ok(response);
             }

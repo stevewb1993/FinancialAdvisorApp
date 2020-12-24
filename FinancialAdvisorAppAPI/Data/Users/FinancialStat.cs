@@ -1,5 +1,4 @@
 ﻿using FinancialAdvisorAppAPI.Contracts.Data;
-using FinancialAdvisorAppAPI.Data.AspNet;
 using FinancialAdvisorAppAPI.Data.Ref;
 using System;
 using System.Collections.Generic;
@@ -11,11 +10,8 @@ namespace FinancialAdvisorAppAPI.Data.Users
     [Table("FinancialStats", Schema = "users")]
     public partial class FinancialStat : UserData
     {
-        [Key]
-        public int Id { get; set; }
-        public string UserId { get; set; }
         public DateTime FinanceDate { get; set; }
-        public int FinanceTypeId { get; set; }
+        public string FinanceTypeId { get; set; }
         public decimal FinanceValue { get; set; }
 
         public virtual FinanceType FinanceType{ get; set; }

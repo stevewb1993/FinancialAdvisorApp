@@ -11,7 +11,7 @@ namespace FinancialAdvisorAppAPI.Services.Users
 {
     public class UserDetailRepository : GenericRepository<UserDetail>, IUserDetailRepository
     {
-        public UserDetailRepository(ApplicationDbContext db) : base(db)
+        public UserDetailRepository(ApplicationDbContext db, DbSet<UserDetail> dbTable) : base(db, dbTable)
         {
 
         }

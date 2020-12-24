@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [users].[Goals]
 (
-	Id INT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
+	Id NVARCHAR (450) NOT NULL PRIMARY KEY,
 	[UserId] NVARCHAR (450) NOT NULL,
 	[DueDate] DATE NOT NULL,
-	[FinanceTypeId] INT NOT NULL,
+	[FinanceTypeId] NVARCHAR (450) NOT NULL,
 	[GoalValue] MONEY NOT NULL,
 	[GoalStartDate] DATE NOT NULL,
 	[UserOrSystemGenerated] NVARCHAR(20) NOT NULL,

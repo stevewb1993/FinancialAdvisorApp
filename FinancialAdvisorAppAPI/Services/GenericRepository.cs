@@ -14,10 +14,10 @@ namespace FinancialAdvisorAppAPI.Services
         public  ApplicationDbContext _db;
         public DbSet<T> _dbTable;
 
-        public GenericRepository(ApplicationDbContext db)
+        public GenericRepository(ApplicationDbContext db, DbSet<T> dbTable)
         {
             _db = db;
-            
+            _dbTable = dbTable;
         }
 
         public async Task<bool> Create(T entity)

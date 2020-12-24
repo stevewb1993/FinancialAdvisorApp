@@ -1,5 +1,4 @@
-﻿using FinancialAdvisorAppAPI.Data.AspNet;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace FinancialAdvisorAppAPI.DTOs.Users
         public decimal GoalValue { get; set; }
         public DateTime GoalStartDate { get; set; }
 
-        public virtual FinanceTypeDTO FinanceType { get; set; }
-        public virtual UserDetailDTO User { get; set; }
+        //public virtual FinanceTypeDTO FinanceType { get; set; }
+        //public virtual UserDetailDTO User { get; set; }
     }
 }

@@ -11,10 +11,20 @@ namespace FinancialAdvisorAppAPI.Services.Users
 {
     public class GoalRepository : GenericUserRepository<Goal>, IGoalRepository
     {
-        public GoalRepository(ApplicationDbContext db) : base(db)
+        //public GoalRepository(ApplicationDbContext db, DbSet<Goal> dbTable) : base(db, dbTable)
+        //{
+        //    
+        //}
+
+        public GoalRepository(ApplicationDbContext db) : base(db, db.Goals)
         {
-            
+
         }
-        
+
+
+
+
+
+
     }
 }

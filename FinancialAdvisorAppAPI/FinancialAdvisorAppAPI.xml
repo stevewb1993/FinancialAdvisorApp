@@ -4,6 +4,11 @@
         <name>FinancialAdvisorAppAPI</name>
     </assembly>
     <members>
+        <member name="T:FinancialAdvisorAppAPI.Controllers.testController">
+            <summary>
+            Endpoint used to interact with the Authors in the book store's database
+            </summary>
+        </member>
         <member name="M:FinancialAdvisorAppAPI.Controllers.UsersController.Register(FinancialAdvisorAppAPI.DTOs.UserDTO)">
             <summary>
             USer Registration Endpoint
@@ -27,7 +32,7 @@
             <summary>
             Get financial goal by UserID
             </summary>
-            <param name="id"></param>
+            <param name="userId"></param>
             <returns>A users goals</returns>
         </member>
     </members>
