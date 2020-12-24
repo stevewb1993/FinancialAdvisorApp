@@ -14,9 +14,8 @@ namespace FinancialAdvisorAppAPI.Data.AspNet
             AspNetUserLogins = new HashSet<AspNetUserLogin>();
             AspNetUserRoles = new HashSet<AspNetUserRole>();
             AspNetUserTokens = new HashSet<AspNetUserToken>();
-            FinancialData = new HashSet<FinancialStat>();
-            FinancialGoals = new HashSet<FinancialGoal>();
-            UserGoals = new HashSet<UserGoal>();
+            //FinancialData = new HashSet<FinancialStat>();
+            //Goals = new HashSet<Goal>();
         }
 
         public string Id { get; set; }
@@ -35,13 +34,12 @@ namespace FinancialAdvisorAppAPI.Data.AspNet
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
 
-        public virtual UserDetail UserDetail { get; set; }
+        //public virtual UserDetail UserDetail { get; set; }
         public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual ICollection<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
         public virtual ICollection<AspNetUserToken> AspNetUserTokens { get; set; }
-        public virtual ICollection<FinancialStat> FinancialData { get; set; }
-        public virtual ICollection<FinancialGoal> FinancialGoals { get; set; }
-        public virtual ICollection<UserGoal> UserGoals { get; set; }
+        //public virtual ICollection<FinancialStat> FinancialData { get; set; }
+        //public virtual ICollection<Goal> Goals { get; set; }
     }
 }

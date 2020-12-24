@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FinancialAdvisorAppAPI.Data;
+using FinancialAdvisorAppAPI.Data.Users;
 using FinancialAdvisorAppAPI.DTOs;
+using FinancialAdvisorAppAPI.DTOs.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +14,7 @@ namespace FinancialAdvisorAppAPI.Mappings
     {
         public Maps()
         {
-            CreateMap<Author, AuthorDTO>().ReverseMap();
-            CreateMap<Author, AuthorCreateDTO>().ReverseMap();
-            CreateMap<Author, AuthorUpdateDTO>().ReverseMap();
-            CreateMap<Book, BookDTO>().ReverseMap();
-            CreateMap<Book, BookCreateDTO>().ReverseMap();
-            CreateMap<Book, BookUpdateDTO>().ReverseMap();
+            CreateMap<Goal, GoalDTO>().ReverseMap();
         }
     }
 }

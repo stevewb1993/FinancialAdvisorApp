@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppAPI.Contracts
 {
-    public interface IFinancialGoalRepository : IRepositoryBase<FinancialGoal>
+    public interface IGoalRepository : IUserRepositoryBase<Goal>
     {
 
     }

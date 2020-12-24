@@ -78,9 +78,8 @@
     <Build Include="dbo\Tables\Books.sql" />
     <Build Include="ref\Tables\FinanceTypes.sql" />
     <Build Include="users\Tables\FinancialData.sql" />
-    <Build Include="users\Tables\FinancialGoals.sql" />
     <Build Include="users\Tables\UserDetails.sql" />
-    <Build Include="users\Tables\UserGoals.sql" />
+    <Build Include="users\Tables\Goals.sql" />
     <Build Include="ref\RefSchema.sql" />
     <Build Include="users\UsersSchema.sql" />
     <Build Include="PostDeployment\Stored Procedures\PostDeployment.sql" />

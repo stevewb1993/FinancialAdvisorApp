@@ -9,10 +9,18 @@ using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppAPI.Services
 {
-    public abstract class GenericUserRepository<T> : GenericRepository<T> where T : UserData
+    public class GenericUserRepository<T> : GenericRepository<T>, IUserRepositoryBase<T> where T : UserData
     {
-        public GenericUserRepository(ApplicationDbContext db, DbSet<T> dbTable) : base(db, dbTable)
+        public GenericUserRepository(ApplicationDbContext db) : base(db)
         {
         }
+
+        public async Task<IList<T>> FindAllByUserId(string userId)
+        {
+            return await _dbTable
+                .Where(g => g.UserId == userId)
+                .ToListAsync();
+        }
+
     }
 }

@@ -7,7 +7,7 @@ namespace FinancialAdvisorAppAPI.Contracts.Data
 {
     public abstract class UserData : ApplicationData
     {
-        public IComparable UserId;
+        public string UserId;
         
     }
 }

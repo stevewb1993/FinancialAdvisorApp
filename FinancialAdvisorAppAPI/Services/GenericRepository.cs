@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppAPI.Services
 {
-    public abstract class GenericRepository<T> : IRepositoryBase<T> where T: ApplicationData
+    public class GenericRepository<T> : IRepositoryBase<T> where T: ApplicationData
     {
         public  ApplicationDbContext _db;
-        public  DbSet<T> _dbTable;
+        public DbSet<T> _dbTable;
 
-        public GenericRepository(ApplicationDbContext db, DbSet<T> dbTable)
+        public GenericRepository(ApplicationDbContext db)
         {
             _db = db;
-            _dbTable = dbTable;
+            
         }
 
         public async Task<bool> Create(T entity)

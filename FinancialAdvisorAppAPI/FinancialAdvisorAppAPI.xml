@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FinancialAdvisorAppAPI</name>
+    </assembly>
+    <members>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.UsersController.Register(FinancialAdvisorAppAPI.DTOs.UserDTO)">
+            <summary>
+            USer Registration Endpoint
+            </summary>
+            <param name="userDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.UsersController.Login(FinancialAdvisorAppAPI.DTOs.UserDTO)">
+            <summary>
+            User Login Endpoint
+            </summary>
+            <param name="userDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="T:FinancialAdvisorAppAPI.Controllers.Users.GoalsController">
+            <summary>
+            Endpoint used to interact with the Authors in the book store's database
+            </summary>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.GetGoalsByUserId(System.String)">
+            <summary>
+            Get financial goal by UserID
+            </summary>
+            <param name="id"></param>
+            <returns>A users goals</returns>
+        </member>
+    </members>
+</doc>

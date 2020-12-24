@@ -1,4 +1,5 @@
-﻿using FinancialAdvisorAppAPI.Data.AspNet;
+﻿using FinancialAdvisorAppAPI.Contracts.Data;
+using FinancialAdvisorAppAPI.Data.AspNet;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FinancialAdvisorAppAPI.Data.Users
 {
     [Table("UserDetails", Schema = "users")]
-    public partial class UserDetail
+    public partial class UserDetail : ApplicationData
     {
         [Key]
         public string Id { get; set; }

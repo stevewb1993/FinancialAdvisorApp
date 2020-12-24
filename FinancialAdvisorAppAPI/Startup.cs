@@ -15,7 +15,6 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using FinancialAdvisorAppAPI.Contracts;
-using BookStore_API.Services;
 using AutoMapper;
 using FinancialAdvisorAppAPI.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +22,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Net.Http.Headers;
 using FinancialAdvisorAppAPI.Services;
+using FinancialAdvisorAppAPI.Services.Users;
+using FinancialAdvisorAppAPI.Data.Users;
 
 namespace FinancialAdvisorAppAPI
 {
@@ -55,27 +56,27 @@ namespace FinancialAdvisorAppAPI
 
             services.AddAutoMapper(typeof(Maps));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(o => {
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-
-                    };
-                });
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(o => {
+            //        o.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuer = true,
+            //            ValidateAudience = true,
+            //            ValidateLifetime = true,
+            //            ValidateIssuerSigningKey = true,
+            //            ValidIssuer = Configuration["Jwt:Issuer"],
+            //            ValidAudience = Configuration["Jwt:Issuer"],
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+            //
+            //        };
+            //    });
 
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Book Store API",
+                    Title = "Financial Advisor API",
                     Version = "v1",
-                    Description = "This is an educational API for a Book Store"
+                    Description = "my custom description"
                 });
 
                 var xfile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -84,8 +85,9 @@ namespace FinancialAdvisorAppAPI
             });
 
             services.AddSingleton<ILoggerService, LoggerService>();
-            services.AddScoped<IAuthorRepository, AuthorRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
+            //services.AddScoped<IAuthorRepository, AuthorRepository>();
+            //services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IGoalRepository, GoalRepository>();
 
             services.AddControllers().AddNewtonsoftJson(op =>
                 op.SerializerSettings.ReferenceLoopHandling =
@@ -126,7 +128,7 @@ namespace FinancialAdvisorAppAPI
             //    .AllowCredentials());
             app.UseCors("CorsPolicy");
 
-            SeedData.Seed(userManager, roleManager).Wait();
+            //SeedData.Seed(userManager, roleManager).Wait();
 
             app.UseRouting();
 

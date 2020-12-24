@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FinancialAdvisorAppAPI.Contracts.Data;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppAPI.Contracts
 {
-    public interface IRepositoryBase<T> where T : class
+    public interface IRepositoryBase<T> where T : ApplicationData
     {
         Task<IList<T>> FindAll();
         Task<T> FindById(IComparable id);

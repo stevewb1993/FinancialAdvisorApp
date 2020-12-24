@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppAPI.Services.Users
 {
-    public class FinancialStatRepository : GenericUserRepository<FinancialStat>, IFinancialStatRepository
+    public class GoalRepository : GenericUserRepository<Goal>, IGoalRepository
     {
-        public FinancialStatRepository(ApplicationDbContext db) : base(db)
+        public GoalRepository(ApplicationDbContext db) : base(db)
         {
-
+            
         }
+        
     }
 }
