@@ -11,7 +11,7 @@ namespace FinancialAdvisorAppAPI.Services.Users
 {
     public class FinancialStatRepository : GenericUserRepository<FinancialStat>, IFinancialStatRepository
     {
-        public FinancialStatRepository(ApplicationDbContext db, DbSet<FinancialStat> dbTable) : base(db, dbTable)
+        public FinancialStatRepository(ApplicationDbContext db) : base(db, db.FinancialStats)
         {
 
         }

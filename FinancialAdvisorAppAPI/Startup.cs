@@ -24,6 +24,7 @@ using Microsoft.Net.Http.Headers;
 using FinancialAdvisorAppAPI.Services;
 using FinancialAdvisorAppAPI.Services.Users;
 using FinancialAdvisorAppAPI.Data.Users;
+using FinancialAdvisorAppAPI.Services.Ref;
 
 namespace FinancialAdvisorAppAPI
 {
@@ -88,6 +89,9 @@ namespace FinancialAdvisorAppAPI
             //services.AddScoped<IAuthorRepository, AuthorRepository>();
             //services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IGoalRepository, GoalRepository>();
+            services.AddScoped<IFinanceTypeRepository, FinanceTypeRepository>();
+            services.AddScoped<IUserDetailRepository, UserDetailRepository>();
+            services.AddScoped<IFinancialStatRepository, FinancialStatRepository>();
  
             services.AddControllers().AddNewtonsoftJson(op =>
                 op.SerializerSettings.ReferenceLoopHandling =

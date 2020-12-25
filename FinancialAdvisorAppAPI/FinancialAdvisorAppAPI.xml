@@ -4,10 +4,155 @@
         <name>FinancialAdvisorAppAPI</name>
     </assembly>
     <members>
-        <member name="T:FinancialAdvisorAppAPI.Controllers.testController">
+        <member name="T:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController">
             <summary>
             Endpoint used to interact with the Authors in the book store's database
             </summary>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController.GetFinanceTypeById(System.String)">
+            <summary>
+            get a finance type by ID
+            </summary>
+            <param name="Id"></param>
+            <returns>a finance type</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController.DeleteFinanceTypeById(System.String)">
+            <summary>
+            delete a finance type by ID
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController.UpdateFinanceTypeById(System.String,FinancialAdvisorAppAPI.DTOs.Users.FinanceTypeDTO)">
+            <summary>
+            Update a finance type
+            </summary>
+            <param name="Id"></param>
+            <param name="financeTypeDTO"></param>
+            <returns>A single finance type</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController.Create(FinancialAdvisorAppAPI.DTOs.Users.FinanceTypeDTO)">
+            <summary>
+            Creates a Finance Type
+            </summary>
+            <param name="financeTypeDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="T:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController">
+            <summary>
+            Endpoint used to interact with the Authors in the book store's database
+            </summary>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController.GetFinancialStatByUserId(System.String)">
+            <summary>
+            Get financial stat by UserID
+            </summary>
+            <param name="userId"></param>
+            <returns>A users financial stats</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController.GetFinancialStatById(System.String)">
+            <summary>
+            Get financial stat by ID
+            </summary>
+            <param name="Id"></param>
+            <returns>A single financial stat</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController.DeleteFinancialStatById(System.String)">
+            <summary>
+            Delete a financial stat by ID
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController.UpdateFinancialStatById(System.String,FinancialAdvisorAppAPI.DTOs.Users.FinancialStatDTO)">
+            <summary>
+            Update a financial goal
+            </summary>
+            <param name="Id"></param>
+            <param name="financialStatDTO"></param>
+            <returns>A single goals</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController.Create(FinancialAdvisorAppAPI.DTOs.Users.FinancialStatDTO)">
+            <summary>
+            Creates a financial stat
+            </summary>
+            <param name="financialStatDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="T:FinancialAdvisorAppAPI.Controllers.Users.GoalsController">
+            <summary>
+            Endpoint used to interact with the Authors in the book store's database
+            </summary>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.GetGoalsByUserId(System.String)">
+            <summary>
+            Get financial goal by UserID
+            </summary>
+            <param name="userId"></param>
+            <returns>A users goals</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.GetGoalById(System.String)">
+            <summary>
+            get a financial goal by ID
+            </summary>
+            <param name="Id"></param>
+            <returns>a users goal </returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.DeleteGoalById(System.String)">
+            <summary>
+            delete a goal by ID
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.UpdateGoalById(System.String,FinancialAdvisorAppAPI.DTOs.Users.GoalDTO)">
+            <summary>
+            Update a goal
+            </summary>
+            <param name="Id"></param>
+            <param name="goalDTO"></param>
+            <returns>A single goals</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.Create(FinancialAdvisorAppAPI.DTOs.Users.GoalDTO)">
+            <summary>
+            Creates a goal
+            </summary>
+            <param name="goalDTO"></param>
+            <returns></returns>
+        </member>
+        <member name="T:FinancialAdvisorAppAPI.Controllers.Users.UserDetailsController">
+            <summary>
+            Endpoint used to interact with the Authors in the book store's database
+            </summary>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.UserDetailsController.GetUserDetailById(System.String)">
+            <summary>
+            get user details by ID
+            </summary>
+            <param name="Id"></param>
+            <returns>a users details </returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.UserDetailsController.DeleteFinanceTypeById(System.String)">
+            <summary>
+            delete a finance type by ID
+            </summary>
+            <param name="Id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.UserDetailsController.UpdateFinanceTypeById(System.String,FinancialAdvisorAppAPI.DTOs.Users.UserDetailDTO)">
+            <summary>
+            Update a user detail
+            </summary>
+            <param name="Id"></param>
+            <param name="userDetailDTO"></param>
+            <returns>A single user detail</returns>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.UserDetailsController.Create(FinancialAdvisorAppAPI.DTOs.Users.UserDetailDTO)">
+            <summary>
+            Creates a user detail
+            </summary>
+            <param name="userDetailDTO"></param>
+            <returns></returns>
         </member>
         <member name="M:FinancialAdvisorAppAPI.Controllers.UsersController.Register(FinancialAdvisorAppAPI.DTOs.UserDTO)">
             <summary>
@@ -22,18 +167,6 @@
             </summary>
             <param name="userDTO"></param>
             <returns></returns>
-        </member>
-        <member name="T:FinancialAdvisorAppAPI.Controllers.Users.GoalsController">
-            <summary>
-            Endpoint used to interact with the Authors in the book store's database
-            </summary>
-        </member>
-        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.GetGoalsByUserId(System.String)">
-            <summary>
-            Get financial goal by UserID
-            </summary>
-            <param name="userId"></param>
-            <returns>A users goals</returns>
         </member>
     </members>
 </doc>

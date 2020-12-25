@@ -53,7 +53,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         }
 
         /// <summary>
-        /// delete a user detail by ID
+        /// delete a finance type by ID
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -61,7 +61,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteGoalById(string Id)
+        public async Task<IActionResult> DeleteFinanceTypeById(string Id)
         {
             return await _helperFunctions.DeleteRecordById(Id);
         }
@@ -76,7 +76,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateGoalById(string Id, [FromBody] UserDetailDTO userDetailDTO)
+        public async Task<IActionResult> UpdateFinanceTypeById(string Id, [FromBody] UserDetailDTO userDetailDTO)
         {
             return await _helperFunctions.UpdateRecordById(Id, userDetailDTO);
         }
