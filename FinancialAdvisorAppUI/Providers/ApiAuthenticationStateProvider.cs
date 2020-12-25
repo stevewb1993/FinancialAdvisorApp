@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace BlazorInputFile.Providers
+namespace FinancialAdvisorAppUI.Providers
 {
     public class ApiAuthenticationStateProvider : AuthenticationStateProvider
 

@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:64724",
-      "sslPort": 44369
+      "applicationUrl": "http://localhost:53313",
+      "sslPort": 44366
     }
   },
   "profiles": {
@@ -18,6 +18,7 @@
     },
     "FinancialAdvisorAppUI": {
       "commandName": "Project",
+      "dotnetRunMessages": "true",
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",

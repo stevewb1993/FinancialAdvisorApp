@@ -1,4 +1,8 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.Extensions.Configuration;
+@using Microsoft.IdentityModel.Tokens;
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">BookStore-UI</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -11,9 +15,11 @@
             <Authorized>
                 <li class="nav-item px-3">
                     <NavLink class="nav-link">
-                        <span class="oi oi-person" aria-hidden="true"></span> @context.User.Identity.Name
+                        <span class="oi oi-person" aria-hidden="true"></span> @context.User.FindFirst(AppConstants.UserId).Value
                     </NavLink>
                 </li>
+
+
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="logout">
                         <span class="oi oi-arrow-circle-left" aria-hidden="true"></span> Log Out
@@ -65,13 +71,11 @@
     </ul>
 </div>
 
-@code {
-    private bool collapseNavMenu = true;
+@code { private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+            private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+            private void ToggleNavMenu()
+            {
+                collapseNavMenu = !collapseNavMenu;
+            } }

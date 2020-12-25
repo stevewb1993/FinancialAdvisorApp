@@ -1,8 +1,8 @@
 ﻿using Blazored.LocalStorage;
-using BookStore_UI.WASM.Contracts;
-using BookStore_UI.WASM.Models;
-using BookStore_UI.WASM.Providers;
-using BookStore_UI.WASM.Static;
+using FinancialAdvisorAppUI.Contracts;
+using FinancialAdvisorAppUI.Models;
+using FinancialAdvisorAppUI.Providers;
+using FinancialAdvisorAppUI.Static;
 using Microsoft.AspNetCore.Components.Authorization;
 using Newtonsoft.Json;
 using System;
