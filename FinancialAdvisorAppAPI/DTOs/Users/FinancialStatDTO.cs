@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppAPI.DTOs.Users
 {
-    public class FinancialStatDTO
+    public class FinancialStatDTO : DTOBase
     {
         public int Id { get; set; }
         public string UserId { get; set; }

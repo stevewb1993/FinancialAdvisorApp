@@ -19,7 +19,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
     [Route("api/[controller]")]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public class GoalsController : Controller
+    public class FinanceTypesController : Controller
     {
 
         private readonly IGoalRepository _goalRepository;
@@ -27,7 +27,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         private readonly IMapper _mapper;
         private readonly GenericUserControllerFunctions<Goal> _helperFunctions;
 
-        public GoalsController(IGoalRepository goalRepository,
+        public FinanceTypesController(IGoalRepository goalRepository,
             ILoggerService logger,
             IMapper mapper)
         {

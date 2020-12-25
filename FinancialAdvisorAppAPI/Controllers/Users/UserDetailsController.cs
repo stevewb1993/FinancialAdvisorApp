@@ -19,54 +19,41 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
     [Route("api/[controller]")]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public class GoalsController : Controller
+    public class UserDetailsController : Controller
     {
 
-        private readonly IGoalRepository _goalRepository;
+        private readonly IUserDetailRepository _userDetailRepository;
         private readonly ILoggerService _logger;
         private readonly IMapper _mapper;
-        private readonly GenericUserControllerFunctions<Goal> _helperFunctions;
+        private readonly GenericControllerFunctions<UserDetail> _helperFunctions;
 
-        public GoalsController(IGoalRepository goalRepository,
+        public UserDetailsController(IUserDetailRepository userDetailRepository,
             ILoggerService logger,
             IMapper mapper)
         {
-            _goalRepository = goalRepository;
+            _userDetailRepository = userDetailRepository;
             _logger = logger;
             _mapper = mapper;
-            _helperFunctions = new GenericUserControllerFunctions<Goal>(_logger, _mapper, _goalRepository, ControllerContext);
+            _helperFunctions = new GenericControllerFunctions<UserDetail>(_logger, _mapper, _userDetailRepository, ControllerContext);
         }
 
-        /// <summary>
-        /// Get financial goal by UserID
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns>A users goals</returns>
-        [HttpGet("{userId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGoalsByUserId(string userId)
-        {
-            return await _helperFunctions.GetRecordsByUserId<GoalDTO>(userId);
-        }
 
         /// <summary>
-        /// get a financial goal by ID
+        /// get user details by ID
         /// </summary>
         /// <param name="Id"></param>
-        /// <returns>a users goal </returns>
+        /// <returns>a users details </returns>
         [HttpGet("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGoalById(string Id)
+        public async Task<IActionResult> GetUserDetailById(string Id)
         {
-            return await _helperFunctions.GetRecordById<GoalDTO>(Id);
+            return await _helperFunctions.GetRecordById<UserDetailDTO>(Id);
         }
 
         /// <summary>
-        /// delete a goal by ID
+        /// delete a user detail by ID
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -80,32 +67,32 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         }
 
         /// <summary>
-        /// Update a goal
+        /// Update a user detail
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="goalDTO"></param>
-        /// <returns>A single goals</returns>
+        /// <param name="userDetailDTO"></param>
+        /// <returns>A single user detail</returns>
         [HttpPut("{Id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateGoalById(string Id, [FromBody] GoalDTO goalDTO)
+        public async Task<IActionResult> UpdateGoalById(string Id, [FromBody] UserDetailDTO userDetailDTO)
         {
-            return await _helperFunctions.UpdateRecordById(Id, goalDTO);
+            return await _helperFunctions.UpdateRecordById(Id, userDetailDTO);
         }
 
         /// <summary>
-        /// Creates a goal
+        /// Creates a user detail
         /// </summary>
-        /// <param name="goalDTO"></param>
+        /// <param name="userDetailDTO"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] GoalDTO goalDTO)
+        public async Task<IActionResult> Create([FromBody] UserDetailDTO userDetailDTO)
         {
-            return await _helperFunctions.Create(goalDTO);
+            return await _helperFunctions.Create(userDetailDTO);
         }
 
     }

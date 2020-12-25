@@ -19,54 +19,54 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
     [Route("api/[controller]")]
     [ApiController]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public class GoalsController : Controller
+    public class FinancialStatsController : Controller
     {
 
-        private readonly IGoalRepository _goalRepository;
+        private readonly IFinancialStatRepository _financialStatRepository;
         private readonly ILoggerService _logger;
         private readonly IMapper _mapper;
-        private readonly GenericUserControllerFunctions<Goal> _helperFunctions;
+        private readonly GenericUserControllerFunctions<FinancialStat> _helperFunctions;
 
-        public GoalsController(IGoalRepository goalRepository,
-            ILoggerService logger,
-            IMapper mapper)
+        public FinancialStatsController(IFinancialStatRepository financialStatRepository, ILoggerService logger, IMapper mapper, GenericUserControllerFunctions<FinancialStat> helperFunctions)
         {
-            _goalRepository = goalRepository;
+            _financialStatRepository = financialStatRepository;
             _logger = logger;
             _mapper = mapper;
-            _helperFunctions = new GenericUserControllerFunctions<Goal>(_logger, _mapper, _goalRepository, ControllerContext);
+            _helperFunctions = helperFunctions;
         }
 
+
+
         /// <summary>
-        /// Get financial goal by UserID
+        /// Get financial stat by UserID
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>A users goals</returns>
+        /// <returns>A users financial stats</returns>
         [HttpGet("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGoalsByUserId(string userId)
+        public async Task<IActionResult> GetFinancialStatByUserId(string userId)
         {
-            return await _helperFunctions.GetRecordsByUserId<GoalDTO>(userId);
+            return await _helperFunctions.GetRecordsByUserId<FinancialStatDTO>(userId);
         }
 
         /// <summary>
-        /// get a financial goal by ID
+        /// Get financial stat by ID
         /// </summary>
         /// <param name="Id"></param>
-        /// <returns>a users goal </returns>
+        /// <returns>A single financial stat</returns>
         [HttpGet("{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGoalById(string Id)
+        public async Task<IActionResult> GetFinancialStatById(string Id)
         {
-            return await _helperFunctions.GetRecordById<GoalDTO>(Id);
+            return await _helperFunctions.GetRecordById<FinancialStatDTO>(Id);
         }
 
         /// <summary>
-        /// delete a goal by ID
+        /// Delete a financial stat by ID
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
@@ -74,39 +74,40 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteGoalById(string Id)
+        public async Task<IActionResult> DeleteFinancialStatById(string Id)
         {
             return await _helperFunctions.DeleteRecordById(Id);
         }
 
         /// <summary>
-        /// Update a goal
+        /// Update a financial goal
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="goalDTO"></param>
+        /// <param name="financialStatDTO"></param>
         /// <returns>A single goals</returns>
         [HttpPut("{Id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateGoalById(string Id, [FromBody] GoalDTO goalDTO)
+        public async Task<IActionResult> UpdateFinancialStatById(string Id, [FromBody] FinancialStatDTO financialStatDTO)
         {
-            return await _helperFunctions.UpdateRecordById(Id, goalDTO);
+            return await _helperFunctions.UpdateRecordById(Id, financialStatDTO);
         }
 
         /// <summary>
-        /// Creates a goal
+        /// Creates a financial stat
         /// </summary>
-        /// <param name="goalDTO"></param>
+        /// <param name="financialStatDTO"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Create([FromBody] GoalDTO goalDTO)
+        public async Task<IActionResult> Create([FromBody] FinancialStatDTO financialStatDTO)
         {
-            return await _helperFunctions.Create(goalDTO);
+            return await _helperFunctions.Create(financialStatDTO);
         }
+
 
     }
 }
