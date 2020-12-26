@@ -48,22 +48,22 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetFinancialStatByUserId(string userId)
         {
-            return await _helperFunctions.GetRecordsByUserId<FinancialStatDTO>(userId);
+            return await _helperFunctions.GetRecordsByUserId<FinancialStatDTO>(userId, ControllerContext);
         }
 
-        /// <summary>
-        /// Get financial stat by ID
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns>A single financial stat</returns>
-        [HttpGet("{Id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetFinancialStatById(string Id)
-        {
-            return await _helperFunctions.GetRecordById<FinancialStatDTO>(Id);
-        }
+        ///// <summary>
+        ///// Get financial stat by ID
+        ///// </summary>
+        ///// <param name="Id"></param>
+        ///// <returns>A single financial stat</returns>
+        //[HttpGet("{Id}")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> GetFinancialStatById(string Id)
+        //{
+        //    return await _helperFunctions.GetRecordById<FinancialStatDTO>(Id);
+        //}
 
         /// <summary>
         /// Delete a financial stat by ID
@@ -76,7 +76,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteFinancialStatById(string Id)
         {
-            return await _helperFunctions.DeleteRecordById(Id);
+            return await _helperFunctions.DeleteRecordById(Id, ControllerContext);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateFinancialStatById(string Id, [FromBody] FinancialStatDTO financialStatDTO)
         {
-            return await _helperFunctions.UpdateRecordById(Id, financialStatDTO);
+            return await _helperFunctions.UpdateRecordById(Id, financialStatDTO, ControllerContext);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] FinancialStatDTO financialStatDTO)
         {
-            return await _helperFunctions.Create(financialStatDTO);
+            return await _helperFunctions.Create(financialStatDTO, ControllerContext);
         }
 
 

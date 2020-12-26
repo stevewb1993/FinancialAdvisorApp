@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinancialAdvisorAppAPI.Data;
+using FinancialAdvisorAppAPI.Data.Ref;
 using FinancialAdvisorAppAPI.Data.Users;
 using FinancialAdvisorAppAPI.DTOs;
 using FinancialAdvisorAppAPI.DTOs.Users;
@@ -15,6 +16,9 @@ namespace FinancialAdvisorAppAPI.Mappings
         public Maps()
         {
             CreateMap<Goal, GoalDTO>().ReverseMap();
+            CreateMap<FinanceType, FinanceTypeDTO>().ReverseMap();
+            CreateMap<UserDetail, UserDetailDTO>().ReverseMap();
+            CreateMap<FinancialStat, FinancialStatDTO>().ReverseMap();
         }
     }
 }

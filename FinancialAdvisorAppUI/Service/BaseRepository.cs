@@ -33,10 +33,9 @@ namespace FinancialAdvisorAppUI.Service
             return false;
         }
 
-        public async Task<bool> Delete(string url, int id)
+        public async Task<bool> Delete(string url, string id)
         {
-            if (id < 1)
-                return false;
+
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
@@ -48,7 +47,7 @@ namespace FinancialAdvisorAppUI.Service
             return false;
         }
 
-        public async Task<T> Get(string url, int id)
+        public async Task<T> GetById(string url, string id)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
@@ -56,6 +55,28 @@ namespace FinancialAdvisorAppUI.Service
 
             return reponse;
         }
+
+        public async Task<IList<T>> GetByUserId(string url, string userId)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", await GetBearerToken());
+            var reponse = await _client.GetFromJsonAsync<IList<T>>(url + userId);
+
+            return reponse;
+        }
+
+        public async Task<bool> CheckUserHasRecords(string url, string userId)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", await GetBearerToken());
+
+            var test = _client.GetAsync(url + userId);
+            if (test.Result.IsSuccessStatusCode) return true;
+            return false;
+
+        }
+
+        
 
         public async Task<IList<T>> Get(string url)
         {
@@ -68,8 +89,9 @@ namespace FinancialAdvisorAppUI.Service
                 return reponse;
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return null;
                
             }
@@ -79,7 +101,7 @@ namespace FinancialAdvisorAppUI.Service
             
         }
 
-        public async Task<bool> Update(string url, T obj, int id)
+        public async Task<bool> Update(string url, T obj, string id)
         {
             if (obj == null)
                 return false;

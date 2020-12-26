@@ -96,7 +96,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         int id = Convert.ToInt32(Id);
-        Model = await _repo.Get(Endpoints.BooksEndpoint, id);
+        Model = await _repo.GetById(Endpoints.BooksEndpoint, id.ToString());
         Authors = await _authorRepo.Get(Endpoints.AuthorsEndpoint);
     }
 
@@ -120,7 +120,7 @@ else
                 Model.Image = string.Empty;
             }
 
-            isSuccess = await _repo.Update(Endpoints.BooksEndpoint, Model, Model.Id);
+            isSuccess = await _repo.Update(Endpoints.BooksEndpoint, Model, Model.Id.ToString());
             if (isSuccess)
             {
                 _toastService.ShowWarning("Book Updated Successfully", "");

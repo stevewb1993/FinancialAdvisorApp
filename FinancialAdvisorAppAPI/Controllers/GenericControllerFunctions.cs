@@ -14,17 +14,15 @@ namespace FinancialAdvisorAppAPI.Controllers
 {
     public class GenericControllerFunctions<T> : Controller where T : ApplicationData
     {
-        private readonly ILoggerService _logger;
-        private readonly IMapper _mapper;
-        private readonly IRepositoryBase<T> _repositoryBase;
-        private readonly ControllerContext _calledControllerContext;
+        public readonly ILoggerService _logger;
+        public readonly IMapper _mapper;
+        public readonly IRepositoryBase<T> _repositoryBase;
 
-        public GenericControllerFunctions(ILoggerService logger, IMapper mapper, IRepositoryBase<T> repositoryBase, ControllerContext calledControllerContext)
+        public GenericControllerFunctions(ILoggerService logger, IMapper mapper, IRepositoryBase<T> repositoryBase)
         {
             _logger = logger;
             _mapper = mapper;
             _repositoryBase = repositoryBase;
-            _calledControllerContext = calledControllerContext;
         }
 
         ////////
@@ -33,10 +31,10 @@ namespace FinancialAdvisorAppAPI.Controllers
         
         
         //Gets
-        public async Task<IActionResult> GetRecordById<dto>(string Id) where dto : DTOBase
+        public async Task<IActionResult> GetRecordById<dto>(string Id, ControllerContext controllerContext) where dto : DTOBase
         {
 
-            string location = GetControllerActionNames();
+            string location = GetControllerActionNames(controllerContext);
             try
             {
                 _logger.LogInfo($"{location}: Attempted Call for id: {Id}");
@@ -53,14 +51,14 @@ namespace FinancialAdvisorAppAPI.Controllers
             }
             catch (Exception e)
             {
-                return ReturnInternalError(e);
+                return ReturnInternalError(e, controllerContext);
             }
         }
 
         //Posts / Creates
-        public async Task<IActionResult> Create([FromBody] DTOBase Dto)
+        public async Task<IActionResult> Create([FromBody] DTOBase Dto, ControllerContext controllerContext)
         {
-            string location = GetControllerActionNames();
+            string location = GetControllerActionNames(controllerContext);
             try
             {
                 _logger.LogInfo($"{location}: Create Attempted");
@@ -93,9 +91,9 @@ namespace FinancialAdvisorAppAPI.Controllers
 
         //Puts / Updates
 
-        public async Task<IActionResult> UpdateRecordById(string Id, DTOBase dto)
+        public async Task<IActionResult> UpdateRecordById(string Id, DTOBase dto, ControllerContext controllerContext)
         {
-            string location = GetControllerActionNames();
+            string location = GetControllerActionNames(controllerContext);
             try
             {
                 _logger.LogInfo($"{location}: Update Attempted on record with id: {Id} ");
@@ -128,9 +126,9 @@ namespace FinancialAdvisorAppAPI.Controllers
 
 
         //Deletes
-        public async Task<IActionResult> DeleteRecordById(string id)
+        public async Task<IActionResult> DeleteRecordById(string id, ControllerContext controllerContext)
         {
-            string location = GetControllerActionNames();
+            string location = GetControllerActionNames(controllerContext);
             try
             {
                 _logger.LogInfo($"{location}: Delete Attempted on record with id: {id} ");
@@ -159,10 +157,10 @@ namespace FinancialAdvisorAppAPI.Controllers
 
 
         //section for helper functions
-        public string GetControllerActionNames()
+        public string GetControllerActionNames(ControllerContext controllerContext)
         {
-            var controller = _calledControllerContext.ActionDescriptor.ControllerName;
-            var action = _calledControllerContext.ActionDescriptor.ActionName;
+            var controller = controllerContext.ActionDescriptor.ControllerName;
+            var action = controllerContext.ActionDescriptor.ActionName;
 
             return $"{controller} - {action}";
         }
@@ -173,9 +171,9 @@ namespace FinancialAdvisorAppAPI.Controllers
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
 
-        public IActionResult ReturnInternalError(Exception e)
+        public IActionResult ReturnInternalError(Exception e, ControllerContext controllerContext)
         {
-            var location = this.GetControllerActionNames();
+            var location = this.GetControllerActionNames(controllerContext);
             string message = $"{location}: {e.Message} - {e.InnerException}";
             _logger.LogError(message);
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);

@@ -35,7 +35,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
             _financeTypeRepository = financeTypeRepository;
             _logger = logger;
             _mapper = mapper;
-            _helperFunctions = new GenericControllerFunctions<FinanceType>(_logger, _mapper, _financeTypeRepository, ControllerContext);
+            _helperFunctions = new GenericControllerFunctions<FinanceType>(_logger, _mapper, _financeTypeRepository);
         }
 
        
@@ -50,7 +50,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetFinanceTypeById(string Id)
         {
-            return await _helperFunctions.GetRecordById<FinanceTypeDTO>(Id);
+            return await _helperFunctions.GetRecordById<FinanceTypeDTO>(Id, ControllerContext);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteFinanceTypeById(string Id)
         {
-            return await _helperFunctions.DeleteRecordById(Id);
+            return await _helperFunctions.DeleteRecordById(Id, ControllerContext);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateFinanceTypeById(string Id, [FromBody] FinanceTypeDTO financeTypeDTO)
         {
-            return await _helperFunctions.UpdateRecordById(Id, financeTypeDTO);
+            return await _helperFunctions.UpdateRecordById(Id, financeTypeDTO, ControllerContext);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] FinanceTypeDTO financeTypeDTO)
         {
-            return await _helperFunctions.Create(financeTypeDTO);
+            return await _helperFunctions.Create(financeTypeDTO, ControllerContext);
         }
 
     }

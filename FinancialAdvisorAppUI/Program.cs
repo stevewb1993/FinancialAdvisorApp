@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using FinancialAdvisorAppUI.Contracts;
 using FinancialAdvisorAppUI.Service;
+using FinancialAdvisorAppUI.Contracts.Users;
+using FinancialAdvisorAppUI.Service.Users;
+using FinancialAdvisorAppUI.Contracts.Ref;
+using FinancialAdvisorAppUI.Service.Ref;
 
 namespace FinancialAdvisorAppUI
 {
@@ -40,6 +44,9 @@ namespace FinancialAdvisorAppUI
             builder.Services.AddTransient<IAuthenticationRepository, AuthenticationRepository>();
             builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
             builder.Services.AddTransient<IBookRepository, BookRepository>();
+            builder.Services.AddTransient<IGoalRepository, GoalRepository>();
+            builder.Services.AddTransient<IUserDetailRepository, UserDetailRepository>();
+            builder.Services.AddTransient<IFinanceTypeRepository, FinanceTypeRepository>();
             builder.Services.AddOptions();
             builder.Services.AddAuthorizationCore();
             //builder.Services.AddTransient<IFileUpload, FileUpload>();

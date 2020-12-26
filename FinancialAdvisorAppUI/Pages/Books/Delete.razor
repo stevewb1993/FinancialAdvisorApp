@@ -97,13 +97,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         int id = Convert.ToInt32(Id);
-        Model = await _repo.Get(Endpoints.BooksEndpoint, id);
+        Model = await _repo.GetById(Endpoints.BooksEndpoint, Id);
     }
 
     private async Task DeleteBook()
     {
         _fileUpload.RemoveFile(Model.Image);
-        isSuccess = await _repo.Delete(Endpoints.BooksEndpoint, Model.Id);
+        isSuccess = await _repo.Delete(Endpoints.BooksEndpoint, Model.Id.ToString());
         if (isSuccess)
         {
             _toastService.ShowError("Book Deleted Successfully", "");

@@ -1,0 +1,43 @@
+﻿@page "/goals/"
+
+@inject IGoalRepository _goalRepo
+@inject IUserDetailRepository _userDetailRepo
+@inject HttpClient _client
+@inject ApiAuthenticationStateProvider _authentication
+
+<h3 class="card-title">Set up your goals</h3>
+<hr />
+<br />
+<p>
+    Use this page to set up your goals
+</p>
+
+
+@code {
+    private IList<Goal> goalModel;
+    private UserDetail userDetailModel;
+
+    private bool isExistsUserDetails;
+    private bool isExistsGoals;
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var auth = await  _authentication.GetAuthenticationStateAsync();
+        string userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        Console.WriteLine(userId);
+
+        //Check user details
+        isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
+
+        //Check goals
+        isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
+
+        //goalModel = await _goalRepo.GetByUserId(Endpoints.GoalsEndpoint, userId);
+
+        //userDetailModel = await _userDetailRepo.GetById(Endpoints.UserDetailsEndpoint, userId);
+
+    }
+}

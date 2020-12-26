@@ -14,23 +14,22 @@ namespace FinancialAdvisorAppAPI.Controllers
 {
     public class GenericUserControllerFunctions<T> : GenericControllerFunctions<T> where T : UserData
     {
-        private readonly ILoggerService _logger;
-        private readonly IMapper _mapper;
-        private readonly IUserRepositoryBase<T> _repositoryBase;
-        private readonly ControllerContext _calledControllerContext;
 
-        public GenericUserControllerFunctions(ILoggerService logger, IMapper mapper, IUserRepositoryBase<T> repositoryBase, ControllerContext calledControllerContext) : base(logger, mapper, repositoryBase, calledControllerContext)
+        private readonly IUserRepositoryBase<T> _userRepositoryBase;
+
+        public GenericUserControllerFunctions(ILoggerService logger, IMapper mapper, IUserRepositoryBase<T> repositoryBase) : base(logger, mapper, repositoryBase)
         {
 
+            _userRepositoryBase = repositoryBase;
         }
 
-        public async Task<IActionResult> GetRecordsByUserId<dto>(string userId) where dto : DTOBase
+        public async Task<IActionResult> GetRecordsByUserId<dto>(string userId, ControllerContext controllerContext) where dto : DTOBase
         {
-            string location = GetControllerActionNames();
+            string location = GetControllerActionNames(controllerContext);
             try
             {
                 _logger.LogInfo($"{location}: Attempted Call for id: {userId}");
-                var recordList = await _repositoryBase.FindAllByUserId(userId);
+                var recordList = await _userRepositoryBase.FindAllByUserId(userId);
                 if (recordList == null || recordList.Count == 0)
                 {
                     _logger.LogWarn($"{location}: Failed to retrieve record with id: {userId}");
@@ -43,7 +42,7 @@ namespace FinancialAdvisorAppAPI.Controllers
             }
             catch (Exception e)
             {
-                return ReturnInternalError(e);
+                return ReturnInternalError(e, controllerContext);
             }
         }
 

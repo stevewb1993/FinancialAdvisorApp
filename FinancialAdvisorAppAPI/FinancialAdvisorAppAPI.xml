@@ -50,13 +50,6 @@
             <param name="userId"></param>
             <returns>A users financial stats</returns>
         </member>
-        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController.GetFinancialStatById(System.String)">
-            <summary>
-            Get financial stat by ID
-            </summary>
-            <param name="Id"></param>
-            <returns>A single financial stat</returns>
-        </member>
         <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinancialStatsController.DeleteFinancialStatById(System.String)">
             <summary>
             Delete a financial stat by ID
@@ -90,13 +83,6 @@
             </summary>
             <param name="userId"></param>
             <returns>A users goals</returns>
-        </member>
-        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.GetGoalById(System.String)">
-            <summary>
-            get a financial goal by ID
-            </summary>
-            <param name="Id"></param>
-            <returns>a users goal </returns>
         </member>
         <member name="M:FinancialAdvisorAppAPI.Controllers.Users.GoalsController.DeleteGoalById(System.String)">
             <summary>

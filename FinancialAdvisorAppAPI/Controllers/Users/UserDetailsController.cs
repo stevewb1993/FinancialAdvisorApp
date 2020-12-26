@@ -34,7 +34,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
             _userDetailRepository = userDetailRepository;
             _logger = logger;
             _mapper = mapper;
-            _helperFunctions = new GenericControllerFunctions<UserDetail>(_logger, _mapper, _userDetailRepository, ControllerContext);
+            _helperFunctions = new GenericControllerFunctions<UserDetail>(_logger, _mapper, _userDetailRepository);
         }
 
 
@@ -49,7 +49,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUserDetailById(string Id)
         {
-            return await _helperFunctions.GetRecordById<UserDetailDTO>(Id);
+            return await _helperFunctions.GetRecordById<UserDetailDTO>(Id, ControllerContext);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteFinanceTypeById(string Id)
         {
-            return await _helperFunctions.DeleteRecordById(Id);
+            return await _helperFunctions.DeleteRecordById(Id, ControllerContext);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateFinanceTypeById(string Id, [FromBody] UserDetailDTO userDetailDTO)
         {
-            return await _helperFunctions.UpdateRecordById(Id, userDetailDTO);
+            return await _helperFunctions.UpdateRecordById(Id, userDetailDTO, ControllerContext);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody] UserDetailDTO userDetailDTO)
         {
-            return await _helperFunctions.Create(userDetailDTO);
+            return await _helperFunctions.Create(userDetailDTO, ControllerContext);
         }
 
     }
