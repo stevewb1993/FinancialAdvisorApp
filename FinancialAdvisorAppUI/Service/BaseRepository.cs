@@ -70,8 +70,8 @@ namespace FinancialAdvisorAppUI.Service
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
 
-            var test = _client.GetAsync(url + userId);
-            if (test.Result.IsSuccessStatusCode) return true;
+            var output = await _client.GetAsync(url + userId);
+            if (output.IsSuccessStatusCode) return true;
             return false;
 
         }

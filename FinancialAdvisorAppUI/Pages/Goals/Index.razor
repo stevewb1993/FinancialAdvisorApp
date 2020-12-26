@@ -1,19 +1,29 @@
 ﻿@page "/goals/"
 
+@inject NavigationManager _navManager
 @inject IGoalRepository _goalRepo
 @inject IUserDetailRepository _userDetailRepo
 @inject HttpClient _client
 @inject ApiAuthenticationStateProvider _authentication
 
-<h3 class="card-title">Set up your goals</h3>
+<h3 class="card-title">Your goals</h3>
 <hr />
 <br />
-<p>
-    Use this page to set up your goals
-</p>
+
+@if (!isExistsUserDetails || !isExistsGoals)
+{
+    <div>
+        Please provide some additional information about yourself so we can create suitable goals for you
+    </div>
+    <button @onclick="createGoals" class="btn btn-outline-secondary">
+        <span class="oi oi-fork"></span>
+        Set up goals
+    </button>
+}
 
 
-@code {
+
+@code { 
     private IList<Goal> goalModel;
     private UserDetail userDetailModel;
 
@@ -25,19 +35,26 @@
     protected async override Task OnInitializedAsync()
     {
 
-        var auth = await  _authentication.GetAuthenticationStateAsync();
+        var auth = await _authentication.GetAuthenticationStateAsync();
         string userId = auth.User.FindFirst(AppConstants.UserId).Value;
-        Console.WriteLine(userId);
+        Console.WriteLine($"user id: {userId}");
 
         //Check user details
         isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
+        Console.WriteLine(isExistsUserDetails);
 
         //Check goals
         isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
+        Console.WriteLine(isExistsGoals);
 
         //goalModel = await _goalRepo.GetByUserId(Endpoints.GoalsEndpoint, userId);
 
         //userDetailModel = await _userDetailRepo.GetById(Endpoints.UserDetailsEndpoint, userId);
 
+    }
+
+    private void createGoals()
+    {
+        _navManager.NavigateTo("/goals/create");
     }
 }

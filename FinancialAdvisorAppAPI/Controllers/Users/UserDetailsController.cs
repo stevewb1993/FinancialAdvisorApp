@@ -30,7 +30,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         public UserDetailsController(IUserDetailRepository userDetailRepository,
             ILoggerService logger,
             IMapper mapper)
-        {
+            {
             _userDetailRepository = userDetailRepository;
             _logger = logger;
             _mapper = mapper;

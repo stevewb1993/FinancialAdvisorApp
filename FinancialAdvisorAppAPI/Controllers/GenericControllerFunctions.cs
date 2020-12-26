@@ -73,6 +73,11 @@ namespace FinancialAdvisorAppAPI.Controllers
                     return BadRequest(ModelState);
                 }
 
+                //if (string.IsNullOrEmpty(Dto.Id))
+                //{
+                //    Dto.Id = new Guid().ToString();
+                //}
+
                 var entity = _mapper.Map<T>(Dto);
                 var isSuccess = await _repositoryBase.Create(entity);
                 if (!isSuccess)

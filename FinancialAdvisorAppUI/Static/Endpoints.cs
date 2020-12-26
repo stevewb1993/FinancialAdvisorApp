@@ -12,7 +12,7 @@ namespace FinancialAdvisorAppUI.Static
 
         public static string AuthorsEndpoint = $"{BaseUrl}api/authors/";
         public static string GoalsEndpoint = $"{BaseUrl}api/goals/";
-        public static string UserDetailsEndpoint = $"{BaseUrl}api/useretails/";
+        public static string UserDetailsEndpoint = $"{BaseUrl}api/userdetails/";
         public static string FinanceTypesEndpoint = $"{BaseUrl}api/financetypes/";
         public static string FinancialStatsEndpoint = $"{BaseUrl}api/financialstats/";
         public static string BooksEndpoint = $"{BaseUrl}api/books/";
