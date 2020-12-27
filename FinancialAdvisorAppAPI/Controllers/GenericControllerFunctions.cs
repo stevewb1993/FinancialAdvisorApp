@@ -55,6 +55,29 @@ namespace FinancialAdvisorAppAPI.Controllers
             }
         }
 
+        public async Task<IActionResult> GetAllRecords<dto>(ControllerContext controllerContext) where dto : DTOBase
+        {
+            string location = GetControllerActionNames(controllerContext);
+            try
+            {
+                _logger.LogInfo($"{location}: Attempted Call all records");
+                var recordList = await _repositoryBase.FindAll();
+                if (recordList == null || recordList.Count == 0)
+                {
+                    _logger.LogWarn($"{location}: Failed to retrieve records");
+                    return NotFound();
+                }
+
+                var response = _mapper.Map<IList<dto>>(recordList);
+                _logger.LogInfo($"{location}: Successfully got all records");
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return ReturnInternalError(e, controllerContext);
+            }
+        }
+
         //Posts / Creates
         public async Task<IActionResult> Create([FromBody] DTOBase Dto, ControllerContext controllerContext)
         {
@@ -72,11 +95,6 @@ namespace FinancialAdvisorAppAPI.Controllers
                     _logger.LogWarn($"{location}: Data was Incomplete");
                     return BadRequest(ModelState);
                 }
-
-                //if (string.IsNullOrEmpty(Dto.Id))
-                //{
-                //    Dto.Id = new Guid().ToString();
-                //}
 
                 var entity = _mapper.Map<T>(Dto);
                 var isSuccess = await _repositoryBase.Create(entity);

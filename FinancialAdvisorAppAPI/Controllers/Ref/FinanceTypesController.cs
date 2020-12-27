@@ -53,6 +53,23 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
             return await _helperFunctions.GetRecordById<FinanceTypeDTO>(Id, ControllerContext);
         }
 
+
+        /// <summary>
+        /// get all finance types
+        /// </summary>
+        /// <param></param>
+        /// <returns>a finance type</returns>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFinanceTypes()
+        {
+            return await _helperFunctions.GetAllRecords<FinanceTypeDTO>(ControllerContext);
+        }
+
+
+
         /// <summary>
         /// delete a finance type by ID
         /// </summary>

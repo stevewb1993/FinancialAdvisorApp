@@ -1,0 +1,53 @@
+﻿@page "/financialstats/"
+
+@inject NavigationManager _navManager
+@inject IFinancialStatRepository _financialStatRepo
+@inject HttpClient _client
+@inject ApiAuthenticationStateProvider _authentication
+
+<h3 class="card-title">Your Financial Stats</h3>
+<hr />
+<br />
+
+@if (isExistsFinancialStats)
+{
+<p>
+    Placeholder for finance tracking dashboard
+</p>
+
+}
+else
+{
+<p>
+    You haven't started tracking any of your finances yet! Please use the button below to create an entry.
+</p>
+}
+<button @onclick="createFinanceEntry" class="btn btn-outline-secondary">
+    <span class="oi oi-fork"></span>
+    Create finance entry
+</button>
+
+
+
+@code { 
+
+
+    private bool isExistsFinancialStats;
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var auth = await _authentication.GetAuthenticationStateAsync();
+        string userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        Console.WriteLine($"user id: {userId}");
+
+        //Check user details
+        isExistsFinancialStats = await _financialStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
+        Console.WriteLine(isExistsFinancialStats);
+    }
+
+    private void createFinanceEntry()
+    {
+        _navManager.NavigateTo("/financialstats/create/");
+    }
+}

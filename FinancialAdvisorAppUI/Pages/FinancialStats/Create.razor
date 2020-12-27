@@ -1,0 +1,118 @@
+﻿@page "/financialstats/create/"
+@inject NavigationManager _navManager
+@inject IFinancialStatRepository _financialStatRepo
+@inject IFinanceTypeRepository _financeTypeRepo
+@inject HttpClient _client
+@inject ApiAuthenticationStateProvider _authentication
+@inject IToastService _toastService
+
+<h3 class="card-title">Create a record of your financial stats</h3>
+<p>You don't need to add an entry for every stat type, but the more information you provide, the more targetted your goals will be.</p>
+
+<br />
+
+
+@if (!isDateSelected)
+{
+    <EditForm Model="financeDateModel" OnValidSubmit="ConfirmDate">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label for="FinanceDate">As of date</label>
+            <InputDate @bind-Value="financeDateModel.financeDate" class="form-control" id="FinanceDate" />
+        </div>
+        <button class="btn btn-primary" type="submit">
+            <span class="oi oi-pencil"></span>
+            Confirm Date
+        </button>
+    </EditForm>
+}
+else
+{
+    foreach (FinanceType financeType in financeTypes)
+    {
+        FinancialStat financialStatModel = new FinancialStat();
+        <EditForm Model="financialStatModel" OnValidSubmit="CreateFinancialStat(financialStatModel.FinanceValue, financeType)">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <h3>Value of @financeType.FinanceDesc</h3>
+            <div class="form-group">
+                <label for="FinanceValue">Value</label>
+                <InputNumber @bind-Value="financialStatModel.FinanceValue" class="form-control" id="FinanceValue" />
+            </div>
+            <button class="btn btn-primary" type="submit">
+                <span class="oi oi-pencil"></span>
+                Update Details
+            </button>
+        </EditForm>
+    }
+}
+
+
+@code
+{
+
+    private FinanceDate financeDateModel = new FinanceDate();
+    private string userId;
+    private IList<FinanceType> financeTypes;
+
+    private bool isDateSelected = false;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var auth = await _authentication.GetAuthenticationStateAsync();
+        userId = auth.User.FindFirst(AppConstants.UserId).Value;
+
+        financeTypes = await _financeTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
+    }
+
+
+    private async void CreateFinancialStat(decimal financeValue, FinanceType financeType)
+    {
+        bool isSuccess;
+        bool isExistFinancialStat = false;
+
+        var auth = await _authentication.GetAuthenticationStateAsync();
+        financialStatModel.UserId = userId;
+        financialStatModel.Id = new Guid().ToString();
+
+        if (!isExistFinancialStat)
+        {
+            isSuccess = await _financialStatRepo.Create(Endpoints.UserDetailsEndpoint, financialStatModel);
+        }
+        else
+        {
+            isSuccess = await _financialStatRepo.Update(Endpoints.UserDetailsEndpoint, financialStatModel, userId);
+        }
+
+        if (isSuccess)
+        {
+            _toastService.ShowSuccess("Details submitted successfully", "");
+        }
+        else
+        {
+            _toastService.ShowError("Something went wrong");
+        }
+    }
+
+    public void testmethod()
+    {
+
+    }
+
+    private void ConfirmDate()
+    {
+        isDateSelected = true;
+    }
+
+    public class FinanceDate
+    {
+        public DateTime financeDate { get; set; }
+    }
+
+
+
+
+}

@@ -44,6 +44,7 @@ namespace FinancialAdvisorAppUI
             builder.Services.AddTransient<IAuthenticationRepository, AuthenticationRepository>();
             builder.Services.AddTransient<IAuthorRepository, AuthorRepository>();
             builder.Services.AddTransient<IBookRepository, BookRepository>();
+            builder.Services.AddTransient<IFinancialStatRepository, FinancialStatRepository>();
             builder.Services.AddTransient<IGoalRepository, GoalRepository>();
             builder.Services.AddTransient<IUserDetailRepository, UserDetailRepository>();
             builder.Services.AddTransient<IFinanceTypeRepository, FinanceTypeRepository>();

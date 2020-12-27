@@ -16,6 +16,13 @@
             <param name="Id"></param>
             <returns>a finance type</returns>
         </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController.GetFinanceTypes">
+            <summary>
+            get all finance types
+            </summary>
+            <param></param>
+            <returns>a finance type</returns>
+        </member>
         <member name="M:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController.DeleteFinanceTypeById(System.String)">
             <summary>
             delete a finance type by ID

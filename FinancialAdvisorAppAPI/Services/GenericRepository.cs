@@ -37,14 +37,14 @@ namespace FinancialAdvisorAppAPI.Services
             return await _dbTable.ToListAsync();
         }
 
-        public async Task<T> FindById(IComparable id)
+        public async Task<T> FindById(string id)
         {
-            return await _dbTable.FirstOrDefaultAsync(q => q.Id.ToString() == id.ToString());
+            return await _dbTable.FirstOrDefaultAsync(q => q.Id == id);
         }
 
-        public async Task<bool> isExists(IComparable id)
+        public async Task<bool> isExists(string id)
         {
-            return await _dbTable.AnyAsync(q => q.Id.ToString() == id.ToString());
+            return await _dbTable.AnyAsync(q => q.Id == id);
         }
 
         public async Task<bool> Save()

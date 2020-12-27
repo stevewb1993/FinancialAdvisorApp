@@ -35,8 +35,6 @@ namespace FinancialAdvisorAppUI.Service
 
         public async Task<bool> Delete(string url, string id)
         {
-
-
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
             HttpResponseMessage response = await _client.DeleteAsync(url + id);
@@ -73,10 +71,7 @@ namespace FinancialAdvisorAppUI.Service
             var output = await _client.GetAsync(url + userId);
             if (output.IsSuccessStatusCode) return true;
             return false;
-
         }
-
-        
 
         public async Task<IList<T>> Get(string url)
         {
@@ -87,18 +82,12 @@ namespace FinancialAdvisorAppUI.Service
                 var reponse = await _client.GetFromJsonAsync<IList<T>>(url);
 
                 return reponse;
-
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return null;
-               
+                return null;  
             }
-            
-
-
-            
         }
 
         public async Task<bool> Update(string url, T obj, string id)

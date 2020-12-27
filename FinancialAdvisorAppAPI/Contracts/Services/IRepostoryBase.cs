@@ -8,8 +8,8 @@ namespace FinancialAdvisorAppAPI.Contracts
     public interface IRepositoryBase<T> where T : ApplicationData
     {
         Task<IList<T>> FindAll();
-        Task<T> FindById(IComparable id);
-        Task<bool> isExists(IComparable id);
+        Task<T> FindById(string id);
+        Task<bool> isExists(string id);
         Task<bool> Create(T entity);
         Task<bool> Update(T entity);
         Task<bool> Delete(T entity);

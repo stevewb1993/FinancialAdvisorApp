@@ -8,7 +8,7 @@
 @inject IToastService _toastService
 
 <h3 class="card-title">Your goals</h3>
-<hr />
+
 <br />
 
 
@@ -76,11 +76,6 @@
 
         //Check goals
         isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
-
-
-
-
-
     }
 
 
@@ -110,7 +105,4 @@
         }
     }
 
-    private void createGoals()
-    {
-        _navManager.NavigateTo("/goals/create");
-    } }
+}
