@@ -68,9 +68,4 @@ else
         Model = await _repo.Get(Endpoints.AuthorsEndpoint);
         //Model = await _client.GetFromJsonAsync<IList<Author>>(Endpoints.AuthorsEndpoint);
     }
-
-    private void createGoals()
-    {
-        _navManager.NavigateTo("/authors/");
-    }
 }

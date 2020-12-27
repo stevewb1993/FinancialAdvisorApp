@@ -11,10 +11,9 @@
 <hr />
 <br />
 
-@if (!isExistsUserDetails)
-{
+
 <p>
-    Please provide some additional information about yourself so we can create suitable goals for you
+    Please provide some information about yourself so we can create suitable goals for you
 </p>
 
 
@@ -22,12 +21,20 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="form-group">
-        <label for="DateOfBirth">Date ff Birth</label>
+        <label for="DateOfBirth">Date of Birth</label>
         <InputDate @bind-Value="userDetailModel.DateOfBirth" class="form-control" id="DateOfBirth" />
     </div>
     <div class="form-group">
         <label for="HighestEducation">Highest Level of Education</label>
-        <InputText @bind-Value="userDetailModel.HighestEducation" class="form-control" id="HighestEducation" />
+        @*<InputText @bind-Value="userDetailModel.HighestEducation" class="form-control" id="HighestEducation" />*@
+        <select @bind="userDetailModel.HighestEducation" class="form-control" id="HighestEducation">
+            @*<option value="">-- Select Education Level --</option>*@
+            <option value="GCSE">GCSE</option>
+            <option value="A-Level">A-Level</option>
+            <option value="BSc">BSc</option>
+            <option value="Post University">Post University</option>
+
+        </select>
     </div>
     <div class="form-group">
         <label for="RetirementAge">Target Retirement Age</label>
@@ -35,20 +42,25 @@
     </div>
     <button class="btn btn-primary" type="submit">
         <span class="oi oi-pencil"></span>
-        Create Author
+        Update Details
     </button>
 </EditForm>
-}
 
 
 
-@code 
-{ 
+
+
+@code
+{
     private IList<Goal> goalModel;
     private UserDetail userDetailModel = new UserDetail();
 
+    private IList<Author> Authors;
+
     private bool isExistsUserDetails;
     private bool isExistsGoals;
+
+    private string userId;
 
 
 
@@ -56,7 +68,7 @@
     {
 
         var auth = await _authentication.GetAuthenticationStateAsync();
-        string userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        userId = auth.User.FindFirst(AppConstants.UserId).Value;
         Console.WriteLine(userId);
 
         //Check user details
@@ -65,27 +77,40 @@
         //Check goals
         isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
 
-        //goalModel = await _goalRepo.GetByUserId(Endpoints.GoalsEndpoint, userId);
 
-        //userDetailModel = await _userDetailRepo.GetById(Endpoints.UserDetailsEndpoint, userId);
+
+
 
     }
 
 
     private async void CreateUserDetail()
     {
+        bool isSuccess;
 
         var auth = await _authentication.GetAuthenticationStateAsync();
         userDetailModel.Id = auth.User.FindFirst(AppConstants.UserId).Value;
-        bool isSuccess = await _userDetailRepo.Create(Endpoints.UserDetailsEndpoint, userDetailModel);
+
+        if (!isExistsUserDetails)
+        {
+            isSuccess = await _userDetailRepo.Create(Endpoints.UserDetailsEndpoint, userDetailModel);
+        }
+        else
+        {
+            isSuccess = await _userDetailRepo.Update(Endpoints.UserDetailsEndpoint, userDetailModel, userId);
+        }
+
         if (isSuccess)
         {
-            _toastService.ShowSuccess("Details submitted  successfully", "");
+            _toastService.ShowSuccess("Details submitted successfully", "");
+        }
+        else
+        {
+            _toastService.ShowError("Something went wrong");
         }
     }
 
     private void createGoals()
     {
         _navManager.NavigateTo("/goals/create");
-    } 
-}
+    } }
