@@ -29,22 +29,26 @@
 }
 else
 {
+    <h6>@financeDateModel.financeDate</h6>
+    <br />
     foreach (FinanceType financeType in financeTypes)
     {
         FinancialStat financialStatModel = new FinancialStat();
-        <EditForm Model="financialStatModel" OnValidSubmit="CreateFinancialStat(financialStatModel.FinanceValue, financeType)">
+
+        <EditForm Model="financialStatModel">
             <DataAnnotationsValidator />
             <ValidationSummary />
-            <h3>Value of @financeType.FinanceDesc</h3>
+            <h5>Value of @financeType.FinanceDesc</h5>
             <div class="form-group">
                 <label for="FinanceValue">Value</label>
                 <InputNumber @bind-Value="financialStatModel.FinanceValue" class="form-control" id="FinanceValue" />
             </div>
-            <button class="btn btn-primary" type="submit">
+            <button class="btn btn-primary" type="submit" @onclick="() => CreateFinancialStat(financialStatModel.FinanceValue, financeType.Id)">
                 <span class="oi oi-pencil"></span>
                 Update Details
             </button>
         </EditForm>
+        <br />
     }
 }
 
@@ -56,7 +60,11 @@ else
     private string userId;
     private IList<FinanceType> financeTypes;
 
+    private bool isExistsFinancialStats;
+
     private bool isDateSelected = false;
+
+    private IList<FinancialStat> userFinancialStats;
 
 
     protected async override Task OnInitializedAsync()
@@ -66,41 +74,45 @@ else
         userId = auth.User.FindFirst(AppConstants.UserId).Value;
 
         financeTypes = await _financeTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
+
+        isExistsFinancialStats = await _financialStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
+
+        if(isExistsFinancialStats)
+        {
+            userFinancialStats = await _financialStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
+        }
     }
 
 
-    private async void CreateFinancialStat(decimal financeValue, FinanceType financeType)
+    private async void CreateFinancialStat(decimal financeValue, string financeTypeId)
     {
-        bool isSuccess;
-        bool isExistFinancialStat = false;
+        bool isSuccess = false;
+        bool isExistsPreviousRecord = false;
 
-        var auth = await _authentication.GetAuthenticationStateAsync();
-        financialStatModel.UserId = userId;
-        financialStatModel.Id = new Guid().ToString();
+        if(isExistsFinancialStats)
+        {
+            var previousRecords = userFinancialStats.Where(x => x.FinanceDate == financeDateModel.financeDate & x.FinanceTypeId == financeTypeId).ToList();
+            isExistsPreviousRecord = previousRecords.Count > 0;
+            if (isExistsPreviousRecord) //record already exists. take existing request and submit put request
+            {
+                string existingGuid = previousRecords.First().Id;
+                FinancialStat financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, existingGuid);
+                isSuccess = await _financialStatRepo.Update(Endpoints.FinancialStatsEndpoint, financialStatToSubmit, userId);
+            }
+        }
+        if(!isExistsPreviousRecord) //no previous entry, create new guid and submit post request
+        {
+            Guid newRecordGuid = new Guid(userId + financeTypeId + DateTime.Now);
+            FinancialStat financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, newRecordGuid.ToString());
+            isSuccess = await _financialStatRepo.Create(Endpoints.FinancialStatsEndpoint, financialStatToSubmit);
+        }
 
-        if (!isExistFinancialStat)
-        {
-            isSuccess = await _financialStatRepo.Create(Endpoints.UserDetailsEndpoint, financialStatModel);
-        }
-        else
-        {
-            isSuccess = await _financialStatRepo.Update(Endpoints.UserDetailsEndpoint, financialStatModel, userId);
-        }
 
-        if (isSuccess)
-        {
-            _toastService.ShowSuccess("Details submitted successfully", "");
-        }
-        else
-        {
-            _toastService.ShowError("Something went wrong");
-        }
+        if (isSuccess) _toastService.ShowSuccess("Details submitted successfully", "");
+        else _toastService.ShowError("Something went wrong");
+
     }
 
-    public void testmethod()
-    {
-
-    }
 
     private void ConfirmDate()
     {
@@ -111,8 +123,5 @@ else
     {
         public DateTime financeDate { get; set; }
     }
-
-
-
 
 }

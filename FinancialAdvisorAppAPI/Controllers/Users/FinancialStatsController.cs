@@ -27,12 +27,12 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         private readonly IMapper _mapper;
         private readonly GenericUserControllerFunctions<FinancialStat> _helperFunctions;
 
-        public FinancialStatsController(IFinancialStatRepository financialStatRepository, ILoggerService logger, IMapper mapper, GenericUserControllerFunctions<FinancialStat> helperFunctions)
+        public FinancialStatsController(IFinancialStatRepository financialStatRepository, ILoggerService logger, IMapper mapper)
         {
             _financialStatRepository = financialStatRepository;
             _logger = logger;
             _mapper = mapper;
-            _helperFunctions = helperFunctions;
+            _helperFunctions = new GenericUserControllerFunctions<FinancialStat>(_logger, _mapper, _financialStatRepository);
         }
 
 
