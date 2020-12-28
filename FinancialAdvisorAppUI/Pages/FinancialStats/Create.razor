@@ -30,76 +30,44 @@
 else
 {
 
-
-    for (int i = 0; i < 10; i++)
-    {
-        <p>@financialStatModelList[i].FinanceType.FinanceDesc</p>
-
-
-        <EditForm Model="financialStatModelList[i]" OnValidSubmit="returnVoid">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <h5>Value of @financialStatModelList[i].FinanceType.FinanceDesc</h5>
+    <EditForm Model="financeStatsFullModel" OnValidSubmit="CreateFinancialStat">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        @foreach (var financeStat in financeStatsFullModel._financeStatsList)
+        {
+            <h5>Value of @financeStat.FinanceType.FinanceDesc</h5>
             <div class="form-group">
-                <label for="FinanceValue">Value</label>
-                <InputDate @bind-Value="financialStatModelList[i].FinanceValue" class="form-control" id="FinanceValue" />
+                <label for="FinanceValue"></label>
+                <InputNumber @bind-Value="financeStat.FinanceValue" class="form-control" id="FinanceValue" />
             </div>
-            <button class="btn btn-primary" type="submit">
-                <span class="oi oi-pencil"></span>
-                Update Details
-            </button>
-        </EditForm>
-
-
-    }
-
-    @*<h6>@financeDateModel.financeDate.ToString("dd MMMM yyyy")</h6>
-    <br />
-    for (int i = 0; i < 11; i++)
-    {
-        Console.WriteLine(i);
-        Console.WriteLine(financialStatModelList[i].FinanceType.FinanceDesc);
-        try
-        {
-            <EditForm Model="financialStatModelList[i]" OnValidSubmit="returnVoid">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <h5>Value of @financialStatModelList[i].FinanceType.FinanceDesc</h5>
-                <div class="form-group">
-                    <label for="FinanceValue">Value</label>
-                    <InputNumber @bind-Value="financialStatModelList[i].FinanceValue" class="form-control" id="FinanceValue" />
-                </div>
-                <button class="btn btn-primary" type="submit" @onclick="() => CreateFinancialStat(financialStatModelList[i].FinanceValue, financialStatModelList[i].FinanceTypeId)">
-                    <span class="oi oi-pencil"></span>
-                    Update Details
-                </button>
-            </EditForm>
-            <br />
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
+        <button class="btn btn-primary" type="submit">
+            <span class="oi oi-pencil"></span>
+            Update Details
+        </button>
+    </EditForm>
 
-    }*@
 }
 
 
 @code
 {
 
+    //initialize models for editforms
     private FinanceDate financeDateModel = new FinanceDate();
-    private string userId;
+    private FinanceStatsFullModel financeStatsFullModel = new FinanceStatsFullModel();
+
+    //initialize variables used needed when user submit the forms (the functions can't be parameterized)
     private List<FinanceType> financeTypes = new List<FinanceType>();
-    private List<FinancialStat> financialStatModelList = new List<FinancialStat>();
-
+    private string userId;
     private bool isExistsFinancialStats;
-
-    private bool isDateSelected = false;
-
     private List<FinancialStat> userFinancialStats = new List<FinancialStat>();
 
 
+    //used for hiding the financial stats form until the date is selected
+    private bool isDateSelected = false;
+
+    
     protected async override Task OnInitializedAsync()
     {
 
@@ -108,56 +76,69 @@ else
 
         financeTypes = await _financeTypeRepo.Get(Endpoints.FinanceTypesEndpoint) as List<FinanceType>;
 
-
-
         isExistsFinancialStats = await _financialStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
 
         if (isExistsFinancialStats)
         {
+            //only attempt to retreive existing financial stats if they exist. otherwise 404 response will break the page
+            //it's used for checking if submissions will be a post or put request
             userFinancialStats = await _financialStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId) as List<FinancialStat>;
         }
     }
 
 
-    private async void CreateFinancialStat(decimal financeValue, string financeTypeId)
+    private async void CreateFinancialStat()
     {
-        bool isSuccess = false;
-        bool isExistsPreviousRecord = false;
+        bool processSucceeded = true;
 
-        FinancialStat financialStatToSubmit;
-
-        if (isExistsFinancialStats)
+        foreach (FinancialStat _financeStat in financeStatsFullModel._financeStatsList)
         {
-            var previousRecords = userFinancialStats.Where(x => x.FinanceDate == financeDateModel.financeDate & x.FinanceTypeId == financeTypeId).ToList();
-            isExistsPreviousRecord = previousRecords.Count > 0;
-            if (isExistsPreviousRecord) //record already exists. take existing request and submit put request
+            FinancialStat financeStat = _financeStat;
+            financeStat.FinanceType = null; //this stops Entity Framework trying to create a new record for the finance type
+            financeStat.UserId = userId;
+            bool isSuccess = false;
+            bool isExistsPreviousRecord = false;
+
+            if (isExistsFinancialStats)
             {
-                string existingGuid = previousRecords.First().Id;
-                financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, existingGuid);
-                isSuccess = await _financialStatRepo.Update(Endpoints.FinancialStatsEndpoint, financialStatToSubmit, existingGuid);
-                userFinancialStats.Remove(previousRecords.First());
-                userFinancialStats.Add(financialStatToSubmit);
+                var previousRecords = userFinancialStats.Where(x => x.FinanceDate == financeDateModel.financeDate & x.FinanceTypeId == financeStat.FinanceTypeId).ToList();
+                isExistsPreviousRecord = previousRecords.Count > 0;
+                if (isExistsPreviousRecord) //record already exists. take existing request and submit put request
+                {
+                    string existingGuid = previousRecords.First().Id;
+                    financeStat.Id = existingGuid;// = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, existingGuid);
+                    isSuccess = await _financialStatRepo.Update(Endpoints.FinancialStatsEndpoint, financeStat, existingGuid);
+                    if(isSuccess)
+                    {
+                        userFinancialStats.Remove(previousRecords.First());
+                        userFinancialStats.Add(financeStat);
+                    }
+                }
             }
-        }
-        if (!isExistsPreviousRecord) //no previous entry, create new guid and submit post request
-        {
-            Guid newRecordGuid = Guid.NewGuid();
-            financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, newRecordGuid.ToString());
-            isSuccess = await _financialStatRepo.Create(Endpoints.FinancialStatsEndpoint, financialStatToSubmit);
-            userFinancialStats.Add(financialStatToSubmit);
-            isExistsFinancialStats = true;
+            if (!isExistsPreviousRecord | !isExistsPreviousRecord) //no previous entry, create new guid and submit post request
+            {
+                Guid newRecordGuid = Guid.NewGuid();
+                financeStat.Id = newRecordGuid.ToString();
+                isSuccess = await _financialStatRepo.Create(Endpoints.FinancialStatsEndpoint, financeStat);
+                if(isSuccess)
+                {
+                    userFinancialStats.Add(financeStat);
+                    isExistsFinancialStats = true;
+                }
+
+            }
+            if (!isSuccess)
+            {
+                processSucceeded = false;
+                _toastService.ShowError("Something went wong processing: " + financeStat.FinanceType.FinanceDesc);
+            }
+
         }
 
-
-        if (isSuccess) _toastService.ShowSuccess("Details submitted successfully", "");
+        if (processSucceeded) _toastService.ShowSuccess("Details submitted successfully", "");
         else _toastService.ShowError("Something went wrong");
 
-    }
 
-
-
-    private async void returnVoid()
-    {
 
     }
 
@@ -169,7 +150,8 @@ else
         foreach (FinanceType financeType in financeTypes)
         {
 
-            financialStatModelList.Add(new FinancialStat(financeDateModel.financeDate, financeType.Id, financeType));
+            FinancialStat statToAdd = new FinancialStat(financeDateModel.financeDate, financeType.Id, financeType);
+            financeStatsFullModel._financeStatsList.Add(statToAdd);
             Console.WriteLine(financeType.FinanceDesc);
 
         }
@@ -185,7 +167,11 @@ else
 
     public class FinanceStatsFullModel
     {
-        public List<FinancialStat>;
+        public List<FinancialStat> _financeStatsList;
+        public FinanceStatsFullModel()
+        {
+            _financeStatsList = new List<FinancialStat>();
+        }
     }
 
 }
