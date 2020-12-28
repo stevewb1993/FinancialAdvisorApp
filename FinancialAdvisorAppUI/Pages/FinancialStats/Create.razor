@@ -35,7 +35,7 @@ else
     {
         FinancialStat financialStatModel = new FinancialStat();
 
-        <EditForm Model="financialStatModel">
+        <EditForm Model="financialStatModel" OnValidSubmit="returnVoid">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <h5>Value of @financeType.FinanceDesc</h5>
@@ -99,7 +99,7 @@ else
             {
                 string existingGuid = previousRecords.First().Id;
                 financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, existingGuid);
-                isSuccess = await _financialStatRepo.Update(Endpoints.FinancialStatsEndpoint, financialStatToSubmit, userId);
+                isSuccess = await _financialStatRepo.Update(Endpoints.FinancialStatsEndpoint, financialStatToSubmit, existingGuid);
                 userFinancialStats.Remove(previousRecords.First());
                 userFinancialStats.Add(financialStatToSubmit);
             }
@@ -110,16 +110,17 @@ else
             financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, newRecordGuid.ToString());
             isSuccess = await _financialStatRepo.Create(Endpoints.FinancialStatsEndpoint, financialStatToSubmit);
             userFinancialStats.Add(financialStatToSubmit);
+            isExistsFinancialStats = true;
         }
 
 
-        if (isSuccess) {
-            _toastService.ShowSuccess("Details submitted successfully", "");
-            userFinancialStats.Add(financialStatToSubmit);
-
-
-        }
+        if (isSuccess) _toastService.ShowSuccess("Details submitted successfully", "");
         else _toastService.ShowError("Something went wrong");
+
+    }
+
+    private async void returnVoid()
+    {
 
     }
 

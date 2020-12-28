@@ -23,7 +23,6 @@ namespace FinancialAdvisorAppUI.Models.Users
             Id = id;
         }
 
-        [Required]
         public DateTime FinanceDate { get; set; }
         public string FinanceTypeId { get; set; }
         [Required]
