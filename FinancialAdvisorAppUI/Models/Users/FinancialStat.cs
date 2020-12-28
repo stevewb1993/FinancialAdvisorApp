@@ -10,10 +10,11 @@ namespace FinancialAdvisorAppUI.Models.Users
 {
     public class FinancialStat : UserData
     {
-        public FinancialStat(DateTime financeDate, string financeTypeId)
+        public FinancialStat(DateTime financeDate, string financeTypeId, FinanceType financeType)
         {
             FinanceDate = financeDate;
             FinanceTypeId = financeTypeId;
+            FinanceType = financeType;
         }
 
         public FinancialStat()
