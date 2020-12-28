@@ -11,7 +11,7 @@ namespace FinancialAdvisorAppAPI.DTOs.Users
     {
         public string UserId { get; set; }
         public DateTime FinanceDate { get; set; }
-        public int FinanceTypeId { get; set; }
+        public string FinanceTypeId { get; set; }
         public decimal FinanceValue { get; set; }
 
         public virtual FinanceTypeDTO FinanceType { get; set; }

@@ -29,7 +29,7 @@
 }
 else
 {
-    <h6>@financeDateModel.financeDate</h6>
+    <h6>@financeDateModel.financeDate.ToString("dd MMMM yyyy")</h6>
     <br />
     foreach (FinanceType financeType in financeTypes)
     {
@@ -64,7 +64,7 @@ else
 
     private bool isDateSelected = false;
 
-    private IList<FinancialStat> userFinancialStats;
+    private IList<FinancialStat> userFinancialStats = new List<FinancialStat>();
 
 
     protected async override Task OnInitializedAsync()
@@ -89,26 +89,36 @@ else
         bool isSuccess = false;
         bool isExistsPreviousRecord = false;
 
-        if(isExistsFinancialStats)
+        FinancialStat financialStatToSubmit;
+
+        if (isExistsFinancialStats)
         {
             var previousRecords = userFinancialStats.Where(x => x.FinanceDate == financeDateModel.financeDate & x.FinanceTypeId == financeTypeId).ToList();
             isExistsPreviousRecord = previousRecords.Count > 0;
             if (isExistsPreviousRecord) //record already exists. take existing request and submit put request
             {
                 string existingGuid = previousRecords.First().Id;
-                FinancialStat financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, existingGuid);
+                financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, existingGuid);
                 isSuccess = await _financialStatRepo.Update(Endpoints.FinancialStatsEndpoint, financialStatToSubmit, userId);
+                userFinancialStats.Remove(previousRecords.First());
+                userFinancialStats.Add(financialStatToSubmit);
             }
         }
         if(!isExistsPreviousRecord) //no previous entry, create new guid and submit post request
         {
-            Guid newRecordGuid = new Guid(userId + financeTypeId + DateTime.Now);
-            FinancialStat financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, newRecordGuid.ToString());
+            Guid newRecordGuid = Guid.NewGuid();
+            financialStatToSubmit = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, newRecordGuid.ToString());
             isSuccess = await _financialStatRepo.Create(Endpoints.FinancialStatsEndpoint, financialStatToSubmit);
+            userFinancialStats.Add(financialStatToSubmit);
         }
 
 
-        if (isSuccess) _toastService.ShowSuccess("Details submitted successfully", "");
+        if (isSuccess) {
+            _toastService.ShowSuccess("Details submitted successfully", "");
+            userFinancialStats.Add(financialStatToSubmit);
+
+
+        }
         else _toastService.ShowError("Something went wrong");
 
     }
