@@ -4,6 +4,18 @@
         <name>FinancialAdvisorAppAPI</name>
     </assembly>
     <members>
+        <member name="T:FinancialAdvisorAppAPI.Controllers.GoalsGeneration.GoalGenerationController">
+            <summary>
+            Endpoint used to interact with the Authors in the book store's database
+            </summary>
+        </member>
+        <member name="M:FinancialAdvisorAppAPI.Controllers.GoalsGeneration.GoalGenerationController.GetGenerateGoalsByUserId(System.String)">
+            <summary>
+            Generate goals based on UserID
+            </summary>
+            <param name="userId"></param>
+            <returns>A set of system generated goals</returns>
+        </member>
         <member name="T:FinancialAdvisorAppAPI.Controllers.Users.FinanceTypesController">
             <summary>
             Endpoint used to interact with the Authors in the book store's database

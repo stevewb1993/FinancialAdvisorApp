@@ -16,7 +16,7 @@ namespace FinancialAdvisorAppAPI.Services
         }
 
 
-        public async Task<IList<T>> FindAllByUserId(string userId)
+        public virtual async Task<IList<T>> FindAllByUserId(string userId)
         {
             return await _dbTable
                 .Where(g => g.UserId == userId)

@@ -196,7 +196,7 @@ namespace FinancialAdvisorAppAPI.Controllers
 
         public IActionResult ReturnInternalError(Exception e, ControllerContext controllerContext)
         {
-            var location = this.GetControllerActionNames(controllerContext);
+            var location = GetControllerActionNames(controllerContext);
             string message = $"{location}: {e.Message} - {e.InnerException}";
             _logger.LogError(message);
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
