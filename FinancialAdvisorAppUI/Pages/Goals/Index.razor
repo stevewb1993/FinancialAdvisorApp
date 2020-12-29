@@ -11,47 +11,53 @@
 <hr />
 <br />
 
-@if (!isExistsUserDetails)
+@if (!loadComplete)
 {
-    <div>
-        Please provide some additional information about yourself so we can create suitable goals for you
-    </div>
-
-
-    <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(linkUserDetails))">
-        <span class="oi oi-fork"></span>
-        Update user details
-    </button>
-}
-
-@if (!isExistsFinancialStats)
-{
-    <div>
-        Please provide some additional information about your finances so we can create suitable goals for you
-    </div>
-    <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(linkUpdateFinStats))">
-        <span class="oi oi-fork"></span>
-        Update financial stats
-    </button>
-}
-
-@if (isExistsUserDetails & isExistsFinancialStats)
-{
-    <button class="btn btn-outline-secondary">
-        <span class="oi oi-fork"></span>
-        Update your goals!
-    </button>
-}
-
-@if(isExistsGoals)
-{
-    <p>Placeholder for goals dashboard</p>
+    <LoadingMessage Message="Loading your details..." />
 }
 else
 {
-    <p>You haven't set up any goals yet!</p>
-}
+    @if (!isExistsUserDetails)
+    {
+        <div>
+            Please provide some additional information about yourself so we can create suitable goals for you
+        </div>
 
+
+        <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(linkUserDetails))">
+            <span class="oi oi-fork"></span>
+            Update user details
+        </button>
+    }
+
+    @if (!isExistsFinancialStats)
+    {
+        <div>
+            Please provide some additional information about your finances so we can create suitable goals for you
+        </div>
+        <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(AppConstants.LinkFinanceTracking))">
+            <span class="oi oi-fork"></span>
+            Update financial stats
+        </button>
+    }
+
+    @if (isExistsUserDetails & isExistsFinancialStats)
+    {
+        <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(AppConstants.LinkGoalsUpdate))">
+            <span class="oi oi-fork"></span>
+            Update your goals!
+        </button>
+    }
+
+    @if (isExistsGoals)
+    {
+        <p>Placeholder for goals dashboard</p>
+    }
+    else
+    {
+        <p>You haven't set up any goals yet!</p>
+    }
+}
 
 
 
@@ -65,6 +71,7 @@ else
     private bool isExistsFinancialStats;
     private string linkUserDetails = "/userdetails/";
     private string linkUpdateFinStats = "/financialstats/create/";
+    private bool loadComplete = false;
 
 
 
@@ -83,11 +90,11 @@ else
         isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
         Console.WriteLine(isExistsGoals);
 
-        //Check goals
+        //Check financial stats
         isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
         Console.WriteLine(isExistsFinancialStats);
+        loadComplete = true;
 
 
-
-    }
+    } 
 }

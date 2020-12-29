@@ -46,6 +46,7 @@ namespace FinancialAdvisorAppUI
             builder.Services.AddTransient<IGoalRepository, GoalRepository>();
             builder.Services.AddTransient<IUserDetailRepository, UserDetailRepository>();
             builder.Services.AddTransient<IFinanceTypeRepository, FinanceTypeRepository>();
+            builder.Services.AddTransient<IGoalGenerationRepository, GoalGenerationRepository>();
             builder.Services.AddOptions();
             builder.Services.AddAuthorizationCore();
             //builder.Services.AddTransient<IFileUpload, FileUpload>();

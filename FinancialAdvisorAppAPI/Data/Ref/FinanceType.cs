@@ -12,6 +12,12 @@ namespace FinancialAdvisorAppAPI.Data.Ref
     [Table("FinanceTypes", Schema ="Ref")]
     public partial class FinanceType : ApplicationData
     {
+        public FinanceType(string id, string financeDesc)
+        {
+            FinanceDesc = financeDesc;
+            Id = id;
+        }
+
         public string FinanceDesc { get; set; }
     }
 }

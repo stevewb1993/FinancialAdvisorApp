@@ -17,6 +17,7 @@ namespace FinancialAdvisorAppUI.Static
         public static string BooksEndpoint = $"{BaseUrl}api/books/";
         public static string RegisterEndpoint = $"{BaseUrl}api/users/register/";
         public static string LoginEndpoint = $"{BaseUrl}api/users/login/";
+        public static string GoalGenerationEndpoint = $"{BaseUrl}api/GoalGeneration/";
 
     }
 
@@ -25,6 +26,7 @@ namespace FinancialAdvisorAppUI.Static
         public const string UserId = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
         public const string LinkFinanceTracking = "/financetracking/";
         public const string LinkGoals = "/goals/";
+        public const string LinkGoalsUpdate = "/goals/create/";
         public const string LinkUserDetails = "/userdetails/";
         public const string LinkLogin = "/login/";
         public const string LinkRegister = "/register/";

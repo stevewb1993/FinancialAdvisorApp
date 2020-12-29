@@ -31,6 +31,19 @@ namespace FinancialAdvisorAppAPI.Data.Users
 
         }
 
+        public Goal(DateTime dueDate, string financeTypeId, decimal goalValue, DateTime goalStartDate, string userId, string id, FinanceType financeType, string justification = null)
+        {
+            DueDate = dueDate;
+            FinanceTypeId = financeTypeId;
+            GoalValue = goalValue;
+            GoalStartDate = goalStartDate;
+            Justification = justification;
+            UserId = userId;
+            Id = id;
+            FinanceType = financeType;
+
+        }
+
         public DateTime DueDate { get; set; }
         public string FinanceTypeId { get; set; }
         public decimal GoalValue { get; set; }

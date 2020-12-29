@@ -1,0 +1,105 @@
+﻿@page "/goals/create/"
+
+@inject NavigationManager _navManager
+@inject IGoalRepository _goalRepo
+@inject IGoalGenerationRepository _goalGenRepo
+@inject IUserDetailRepository _userDetailRepo
+@inject IFinancialStatRepository _finStatRepo
+@inject HttpClient _client
+@inject ApiAuthenticationStateProvider _authentication
+
+
+<h3 class="card-title">Goals Refresh</h3>
+
+@if (!loadComplete)
+{
+    <LoadingMessage Message="Generating your goals..." />
+}
+else
+{
+    <EditForm Model="goalListModel" OnValidSubmit="SubmitGoals">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        @foreach (var goal in goalListModel.goalList)
+        {
+            <p>@goal.FinanceType.FinanceDesc</p>
+            <p>@goal.Justification</p>
+            <div class="form-group">
+                <label for="GoalValue">Goal Value</label>
+                <InputNumber @bind-Value="goal.GoalValue" class="form-control" id="GoalValue" />
+            </div>
+            <div class="form-group">
+                <label for="GoalStartDate">Goal Start Date</label>
+                <RadzenDatePicker @bind-Value="goal.GoalStartDate" DateFormat="d" id="GoalStartDate" />
+            </div>
+            <div class="form-group">
+                <label for="GoalDueDate">Goal Due Date</label>
+                <RadzenDatePicker @bind-Value="goal.DueDate" DateFormat="d" id="GoalDueDate" />
+            </div>
+
+        }
+        <button class="btn btn-primary" type="submit">
+            <span class="oi oi-pencil"></span>
+            Update Details
+        </button>
+    </EditForm>
+}
+
+@code {
+
+    private bool loadComplete = false;
+    private string userId;
+    private bool isExistsFinancialStats;
+    //private bool isExistsGoals;
+    private bool isExistsUserDetails;
+    private GoalListModel goalListModel = new GoalListModel();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var auth = await _authentication.GetAuthenticationStateAsync();
+        string userId = auth.User.FindFirst(AppConstants.UserId).Value;
+
+
+        //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
+        //Check user details
+        isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
+
+        //Check goals
+        //isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
+
+        //Check financial stats
+        isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
+
+        if(!isExistsUserDetails | !isExistsFinancialStats)
+        {
+            _navManager.NavigateTo(AppConstants.LinkGoals);
+        }
+        else
+        {
+            //Request new goals
+            goalListModel.goalList = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
+            loadComplete = true;
+        }
+
+    }
+
+    public async void SubmitGoals()
+    {
+
+    }
+
+
+    public class GoalListModel
+    {
+        public IList<Goal> goalList { get; set; }
+        public GoalListModel()
+        {
+            goalList = new List<Goal>();
+        }
+    }
+
+
+
+
+
+}

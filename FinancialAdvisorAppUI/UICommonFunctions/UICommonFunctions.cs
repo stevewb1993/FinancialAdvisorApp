@@ -22,5 +22,11 @@ namespace FinancialAdvisorAppUI.UICommonFunctions
                 _toastService.ShowError("Something went wrong");
             }
         }
+
+        public static void ReportError(string message)
+        {
+            _toastService.ShowError(message);
+        }
+
     }
 }

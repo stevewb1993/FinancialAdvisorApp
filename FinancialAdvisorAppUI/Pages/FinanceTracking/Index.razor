@@ -9,26 +9,33 @@
 <hr />
 <br />
 
-@if (isExistsFinancialStats)
+@if (!loadComplete)
 {
-<p>
-    Placeholder for finance tracking dashboard
-</p>
-
+    <LoadingMessage Message="Loading your details..." />
 }
 else
 {
-<p>
-    You haven't started tracking any of your finances yet! Please use the button below to create an entry.
-</p>
+
+    @if (isExistsFinancialStats)
+    {
+        <p>
+            Placeholder for finance tracking dashboard
+        </p>
+
+    }
+    else
+    {
+        <p>
+            You haven't started tracking any of your finances yet! Please use the button below to create an entry.
+        </p>
+    }
+
+    <RadzenDatePicker @bind-Value=@financeDate DateFormat="d" />
+    <button @onclick="@(e => _navManager.NavigateTo($"{AppConstants.LinkFinanceTracking}create/{financeDate.ToString("yyyymmdd")}"))" class="btn btn-outline-secondary">
+        <span class="oi oi-fork"></span>
+        Create finance entry
+    </button>
 }
-
-<RadzenDatePicker @bind-Value=@financeDate DateFormat="d" />
-<button @onclick="@(e => _navManager.NavigateTo($"{AppConstants.LinkFinanceTracking}create/{financeDate.ToString("yyyymmdd")}"))" class="btn btn-outline-secondary">
-    <span class="oi oi-fork"></span>
-    Create finance entry
-</button>
-
 
 
 @code {
@@ -36,7 +43,7 @@ else
     private bool isExistsFinancialStats;
     DateTime financeDate = DateTime.Now;
 
-    private string createlink;
+    private bool loadComplete = false;
 
     protected async override Task OnInitializedAsync()
     {
@@ -48,6 +55,7 @@ else
         //Check user details
         isExistsFinancialStats = await _financialStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
         Console.WriteLine(isExistsFinancialStats);
+        loadComplete = true;
     }
 
 
