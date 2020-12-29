@@ -9,4 +9,6 @@ namespace FinancialAdvisorAppUI.Models
     {
         public string Token { get; set; }
     }
+
+    
 }

@@ -1,4 +1,5 @@
-﻿@page "/financialstats/create/"
+﻿@page "/financetracking/create/{dateId}"
+@using System.Globalization 
 @inject NavigationManager _navManager
 @inject IFinancialStatRepository _financialStatRepo
 @inject IFinanceTypeRepository _financeTypeRepo
@@ -12,49 +13,33 @@
 <br />
 
 
-@if (!isDateSelected)
-{
-    <EditForm Model="financeDateModel" OnValidSubmit="ConfirmDate">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+<EditForm Model="financeStatsFullModel" OnValidSubmit="CreateFinancialStat">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    @foreach (var financeStat in financeStatsFullModel._financeStatsList)
+    {
+        <h5>Value of @financeStat.FinanceType.FinanceDesc</h5>
         <div class="form-group">
-            <label for="FinanceDate">As of date</label>
-            <InputDate @bind-Value="financeDateModel.financeDate" class="form-control" id="FinanceDate" />
+            <label for="FinanceValue"></label>
+            <InputNumber @bind-Value="financeStat.FinanceValue" class="form-control" id="FinanceValue" />
         </div>
-        <button class="btn btn-primary" type="submit">
-            <span class="oi oi-pencil"></span>
-            Confirm Date
-        </button>
-    </EditForm>
-}
-else
-{
+    }
+    <button class="btn btn-primary" type="submit">
+        <span class="oi oi-pencil"></span>
+        Update Details
+    </button>
+</EditForm>
 
-    <EditForm Model="financeStatsFullModel" OnValidSubmit="CreateFinancialStat">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        @foreach (var financeStat in financeStatsFullModel._financeStatsList)
-        {
-            <h5>Value of @financeStat.FinanceType.FinanceDesc</h5>
-            <div class="form-group">
-                <label for="FinanceValue"></label>
-                <InputNumber @bind-Value="financeStat.FinanceValue" class="form-control" id="FinanceValue" />
-            </div>
-        }
-        <button class="btn btn-primary" type="submit">
-            <span class="oi oi-pencil"></span>
-            Update Details
-        </button>
-    </EditForm>
 
-}
 
 
 @code
 {
+    [Parameter]
+    public string dateId { get; set; }
 
     //initialize models for editforms
-    private FinanceDate financeDateModel = new FinanceDate();
+
     private FinanceStatsFullModel financeStatsFullModel = new FinanceStatsFullModel();
 
     //initialize variables used needed when user submit the forms (the functions can't be parameterized)
@@ -63,16 +48,16 @@ else
     private bool isExistsFinancialStats;
     private List<FinancialStat> userFinancialStats = new List<FinancialStat>();
 
+    private DateTime financeDate;
 
-    //used for hiding the financial stats form until the date is selected
-    private bool isDateSelected = false;
-
-    
     protected async override Task OnInitializedAsync()
     {
 
         var auth = await _authentication.GetAuthenticationStateAsync();
         userId = auth.User.FindFirst(AppConstants.UserId).Value;
+
+        financeDate = DateTime.ParseExact(dateId,"yyyymmdd", CultureInfo.InvariantCulture);
+        Console.WriteLine(financeDate);
 
         financeTypes = await _financeTypeRepo.Get(Endpoints.FinanceTypesEndpoint) as List<FinanceType>;
 
@@ -83,6 +68,14 @@ else
             //only attempt to retreive existing financial stats if they exist. otherwise 404 response will break the page
             //it's used for checking if submissions will be a post or put request
             userFinancialStats = await _financialStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId) as List<FinancialStat>;
+        }
+
+        foreach (FinanceType financeType in financeTypes)
+        {
+
+            FinancialStat statToAdd = new FinancialStat(financeDate, financeType.Id, financeType);
+            financeStatsFullModel._financeStatsList.Add(statToAdd);
+
         }
     }
 
@@ -101,7 +94,7 @@ else
 
             if (isExistsFinancialStats)
             {
-                var previousRecords = userFinancialStats.Where(x => x.FinanceDate == financeDateModel.financeDate & x.FinanceTypeId == financeStat.FinanceTypeId).ToList();
+                var previousRecords = userFinancialStats.Where(x => x.FinanceDate == financeDate & x.FinanceTypeId == financeStat.FinanceTypeId).ToList();
                 isExistsPreviousRecord = previousRecords.Count > 0;
                 if (isExistsPreviousRecord) //record already exists. take existing request and submit put request
                 {
@@ -142,27 +135,6 @@ else
 
     }
 
-
-    private async void ConfirmDate()
-    {
-        //if(financeTypes.Count < 10) Thread.sleep
-        Console.WriteLine("creating models");
-        foreach (FinanceType financeType in financeTypes)
-        {
-
-            FinancialStat statToAdd = new FinancialStat(financeDateModel.financeDate, financeType.Id, financeType);
-            financeStatsFullModel._financeStatsList.Add(statToAdd);
-            Console.WriteLine(financeType.FinanceDesc);
-
-        }
-        Console.WriteLine("completed creating models");
-        isDateSelected = true;
-    }
-
-    public class FinanceDate
-    {
-        public DateTime financeDate { get; set; }
-    }
 
 
     public class FinanceStatsFullModel

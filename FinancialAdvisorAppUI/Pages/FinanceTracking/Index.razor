@@ -1,4 +1,4 @@
-﻿@page "/financialstats/"
+﻿@page "/financetracking/"
 
 @inject NavigationManager _navManager
 @inject IFinancialStatRepository _financialStatRepo
@@ -22,17 +22,21 @@ else
     You haven't started tracking any of your finances yet! Please use the button below to create an entry.
 </p>
 }
-<button @onclick="createFinanceEntry" class="btn btn-outline-secondary">
+
+<RadzenDatePicker @bind-Value=@financeDate DateFormat="d" />
+<button @onclick="@(e => _navManager.NavigateTo($"{AppConstants.LinkFinanceTracking}create/{financeDate.ToString("yyyymmdd")}"))" class="btn btn-outline-secondary">
     <span class="oi oi-fork"></span>
     Create finance entry
 </button>
 
 
 
-@code { 
-
+@code {
 
     private bool isExistsFinancialStats;
+    DateTime financeDate = DateTime.Now;
+
+    private string createlink;
 
     protected async override Task OnInitializedAsync()
     {
@@ -46,8 +50,9 @@ else
         Console.WriteLine(isExistsFinancialStats);
     }
 
-    private void createFinanceEntry()
+
+    void OnChange(DateTime? value, string name, string format)
     {
-        _navManager.NavigateTo("/financialstats/create/");
+
     }
 }

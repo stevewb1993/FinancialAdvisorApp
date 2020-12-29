@@ -1,4 +1,4 @@
-﻿@page "/goals/create/"
+﻿@page "/userdetails/"
 
 @inject NavigationManager _navManager
 @inject IGoalRepository _goalRepo
@@ -7,7 +7,7 @@
 @inject ApiAuthenticationStateProvider _authentication
 @inject IToastService _toastService
 
-<h3 class="card-title">Your goals</h3>
+<h3 class="card-title">Profile</h3>
 
 <br />
 
@@ -26,9 +26,7 @@
     </div>
     <div class="form-group">
         <label for="HighestEducation">Highest Level of Education</label>
-        @*<InputText @bind-Value="userDetailModel.HighestEducation" class="form-control" id="HighestEducation" />*@
         <select @bind="userDetailModel.HighestEducation" class="form-control" id="HighestEducation">
-            @*<option value="">-- Select Education Level --</option>*@
             <option value="GCSE">GCSE</option>
             <option value="A-Level">A-Level</option>
             <option value="BSc">BSc</option>
@@ -52,7 +50,7 @@
 
 @code
 {
-    private IList<Goal> goalModel;
+
     private UserDetail userDetailModel = new UserDetail();
 
     private bool isExistsUserDetails;
@@ -67,13 +65,14 @@
 
         var auth = await _authentication.GetAuthenticationStateAsync();
         userId = auth.User.FindFirst(AppConstants.UserId).Value;
-        Console.WriteLine(userId);
 
         //Check user details
         isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
+        if(isExistsUserDetails)
+        {
+            userDetailModel = await _userDetailRepo.GetById(Endpoints.UserDetailsEndpoint, userId);
+        }
 
-        //Check goals
-        isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
     }
 
 
