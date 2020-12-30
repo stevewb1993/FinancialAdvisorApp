@@ -12,7 +12,8 @@
 
 <h3 class="card-title">Goals Refresh</h3>
 
-@if (!loadComplete)
+
+@if (!loadNewGoalsComplete)
 {
     <LoadingMessage Message="Generating your goals..." />
  }
@@ -85,7 +86,7 @@ else
 
 @code {
 
-    private bool loadComplete = false;
+    private bool loadNewGoalsComplete = farwqqwerlse;
     private string userId;
     private bool isExistsFinancialStats;
     //private bool isExistsGoals;
@@ -121,7 +122,7 @@ else
             //Request new goals
             //goalListModel.goalList = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
             goals = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
-            loadComplete = true;
+            loadNewGoalsComplete = true;
         }
 
     }
