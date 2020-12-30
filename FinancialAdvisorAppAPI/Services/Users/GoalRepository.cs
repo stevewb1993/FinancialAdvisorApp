@@ -21,6 +21,14 @@ namespace FinancialAdvisorAppAPI.Services.Users
 
         }
 
+        public override async Task<IList<Goal>> FindAllByUserId(string userId)
+        {
+            return await _db.Goals
+                .Where(g => g.UserId == userId)
+                .Include(g => g.FinanceType)
+                .ToListAsync();
+        }
+
 
 
 

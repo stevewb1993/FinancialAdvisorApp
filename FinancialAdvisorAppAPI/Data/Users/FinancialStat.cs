@@ -13,6 +13,7 @@ namespace FinancialAdvisorAppAPI.Data.Users
         public DateTime FinanceDate { get; set; }
         public string FinanceTypeId { get; set; }
         public decimal FinanceValue { get; set; }
+        public decimal InterestRate { get; set; }
 
         public virtual FinanceType FinanceType{ get; set; }
         public virtual UserDetail User { get; set; }

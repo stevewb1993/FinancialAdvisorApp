@@ -10,7 +10,7 @@ namespace FinancialAdvisorAppUI.Models.Ref
 {
     public class FinanceType : ApplicationData
     {
-
+        public string StockOrFlow { get; set; }
         public string FinanceDesc { get; set; }
     }
 }

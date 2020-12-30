@@ -30,10 +30,21 @@ namespace FinancialAdvisorAppUI.Models.Users
             Id = id;
         }
 
+        public FinancialStat(DateTime financeDate, string financeTypeId, decimal financeValue, decimal interestRate, string userId, string id)
+        {
+            FinanceDate = financeDate;
+            FinanceTypeId = financeTypeId;
+            FinanceValue = financeValue;
+            UserId = userId;
+            Id = id;
+            InterestRate = interestRate;
+        }
+
         public DateTime FinanceDate { get; set; }
         public string FinanceTypeId { get; set; }
         [Required]
         public decimal FinanceValue { get; set; }
+        public decimal InterestRate { get; set; }
 
         public virtual FinanceType FinanceType { get; set; }
         public virtual UserDetail User { get; set; }

@@ -5,6 +5,7 @@ namespace FinancialAdvisorAppAPI.DTOs.Users
     public class FinanceTypeDTO : DTOBase
     {
         public string FinanceDesc { get; set; }
+        public string StockOrFlow { get; set; }
 
     }
 }

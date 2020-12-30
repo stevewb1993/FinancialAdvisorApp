@@ -74,8 +74,6 @@
     <Build Include="dbo\Tables\AspNetUserRoles.sql" />
     <Build Include="dbo\Tables\AspNetUsers.sql" />
     <Build Include="dbo\Tables\AspNetUserTokens.sql" />
-    <Build Include="dbo\Tables\Authors.sql" />
-    <Build Include="dbo\Tables\Books.sql" />
     <Build Include="ref\Tables\FinanceTypes.sql" />
     <Build Include="users\Tables\FinancialData.sql" />
     <Build Include="users\Tables\UserDetails.sql" />

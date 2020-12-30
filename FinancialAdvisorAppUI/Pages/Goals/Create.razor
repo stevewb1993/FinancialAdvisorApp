@@ -25,14 +25,22 @@ else
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Generate new intelligent goals" Click="@GenerateNewGoals" />
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Manual Entry" Click="@InsertRow" />
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Save" Click="@SaveGoals" />
-    <RadzenGrid @ref="goalsGrid" AllowFiltering="true" AllowPaging="true" PageSize="3" AllowSorting="true" EditMode="DataGridEditMode.Single"
+    <RadzenGrid @ref="goalsGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Single"
                 Data="@goals" TItem="Goal">
         <Columns>
-            @*<RadzenGridColumn Width="100px" TItem="Goal" Property="Id" Title="Goal ID" />*@
 
             <RadzenGridColumn Width="200px" TItem="Goal" Property="FinanceType.FinanceDesc" Title="Goal Type">
+                <EditTemplate Context="goal">
+                    <RadzenDropDown @bind-Value="goal.FinanceType.FinanceDesc" Data="@financeTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
 
-            <RadzenGridColumn Width="200px" TItem="Goal" Property="Justification" Title="Justification" />
+            <RadzenGridColumn Width="200px" TItem="Goal" Property="Justification" Title="Justification">
+                <EditTemplate Context="goal">
+                    <RadzenTextBox @bind-Value="goal.Justification" Style="width:100%; display: block" Name="Justification" />
+                    <RadzenRequiredValidator Text="Justification is required" Component="ShipName" Popup="true" />
+                </EditTemplate>
+            </RadzenGridColumn>
 
             <RadzenGridColumn Width="200px" TItem="Goal" Property="GoalValue" Title="Goal Value">
                 <EditTemplate Context="goal">
@@ -98,16 +106,19 @@ else
     //Datagrid
     RadzenGrid<Goal> goalsGrid;
     List<Goal> goals = new List<Goal>();
-    IList<FinanceType> FinanceTypes = new List<FinanceType>();
+    IList<FinanceType> financeTypes = new List<FinanceType>();
     IList<Goal> originalGoals = new List<Goal>();
+
+    //For tracking which goals are new vs original
+    private IList<string> originalGoalsGuidList = new List<string>();
 
     protected async override Task OnInitializedAsync()
     {
         var auth = await _authentication.GetAuthenticationStateAsync();
-        string userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        userId = auth.User.FindFirst(AppConstants.UserId).Value;
 
         //load financial types for drop down editting
-        var financeTypes = await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
+        financeTypes = await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
 
         //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
         //Check user details
@@ -130,6 +141,7 @@ else
             {
                 originalGoals = await _goalRepo.GetByUserId(Endpoints.GoalsEndpoint, userId);
                 goals.AddRange(new List<Goal>(originalGoals));
+                originalGoalsGuidList = originalGoals.Select(g => g.Id).ToList();
             }
             loadComplete = true;
         }
@@ -139,6 +151,7 @@ else
     {
         var newGoals = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
         goals.AddRange(newGoals);
+        await goalsGrid.Reload();
     }
 
     void EditRow(Goal goal)
@@ -180,20 +193,41 @@ else
         foreach(Goal goal in goals)
         {
             bool isSuccess;
+            Goal goalToSubmit = goal;
+            //need to update this value since the ID of the finance type doesn't update when the user changes the finance type description
+            goalToSubmit.FinanceTypeId = financeTypes.Where(x => x.FinanceDesc == goalToSubmit.FinanceType.FinanceDesc).FirstOrDefault().Id;
+
+            //need to overwrite this as otherwise entity framework tries to add it to the finance types table
+            goalToSubmit.FinanceType = null;
+
             //if this was an original goal, then we need to do a put request. otherwise, post request
-            if(originalGoals.Contains(goal))
+            if(originalGoalsGuidList.Contains(goal.Id))
             {
-                isSuccess = await _goalRepo.Create(Endpoints.GoalsEndpoint, goal);
+                isSuccess = await _goalRepo.Update(Endpoints.GoalsEndpoint, goalToSubmit, goalToSubmit.Id);
             }
             else
             {
-                isSuccess = await _goalRepo.Update(Endpoints.GoalsEndpoint, goal, goal.Id);
+                isSuccess = await _goalRepo.Create(Endpoints.GoalsEndpoint, goalToSubmit);
             }
-            
+
             if (!isSuccess)
             {
                 isAllSuccess = false;
-                _toastService.ShowError($"Something went wrong processing goal: {goal.Id} - {goal.FinanceType.FinanceDesc}");
+                _toastService.ShowError($"Something went wrong processing goal: {goalToSubmit.Id}");
+            }
+        }
+        //for any goals in the original list that have been deleted, we need to submit a delete request
+        List<string> newGoalsGuidList = goals.Select(g => g.Id).ToList();
+        foreach(Goal originalGoal in originalGoals)
+        {
+            if (!newGoalsGuidList.Contains(originalGoal.Id))
+            {
+                bool isDeleteSuccess = await _goalRepo.Delete(Endpoints.GoalsEndpoint, originalGoal.Id);
+                if (!isDeleteSuccess)
+                {
+                    isAllSuccess = false;
+                    _toastService.ShowError($"Something went wrong processing goal: {originalGoal.Id}");
+                }
             }
         }
 
