@@ -5,6 +5,7 @@
 @inject IGoalGenerationRepository _goalGenRepo
 @inject IUserDetailRepository _userDetailRepo
 @inject IFinancialStatRepository _finStatRepo
+@inject IFinanceTypeRepository _finTypeRepo
 @inject HttpClient _client
 @inject ApiAuthenticationStateProvider _authentication
 @inject IToastService _toastService
@@ -13,21 +14,23 @@
 <h3 class="card-title">Goals Refresh</h3>
 
 
-@if (!loadNewGoalsComplete)
+@if (!loadComplete)
 {
-    <LoadingMessage Message="Generating your goals..." />
+    <LoadingMessage Message="Loading your goals..." />
  }
 else
 {
 
-    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add" Click="@InsertRow" />
+
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Generate new intelligent goals" Click="@GenerateNewGoals" />
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Manual Entry" Click="@InsertRow" />
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Save" Click="@SaveGoals" />
     <RadzenGrid @ref="goalsGrid" AllowFiltering="true" AllowPaging="true" PageSize="3" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                Data="@goals" TItem="Goal" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+                Data="@goals" TItem="Goal">
         <Columns>
             @*<RadzenGridColumn Width="100px" TItem="Goal" Property="Id" Title="Goal ID" />*@
 
-            <RadzenGridColumn Width="200px" TItem="Goal" Property="FinanceType.FinanceDesc" Title="Goal Type" />
+            <RadzenGridColumn Width="200px" TItem="Goal" Property="FinanceType.FinanceDesc" Title="Goal Type">
 
             <RadzenGridColumn Width="200px" TItem="Goal" Property="Justification" Title="Justification" />
 
@@ -86,29 +89,32 @@ else
 
 @code {
 
-    private bool loadNewGoalsComplete = farwqqwerlse;
+    private bool loadComplete = false;
     private string userId;
     private bool isExistsFinancialStats;
-    //private bool isExistsGoals;
+    private bool isExistsGoals;
     private bool isExistsUserDetails;
-    private GoalListModel goalListModel = new GoalListModel();
 
     //Datagrid
     RadzenGrid<Goal> goalsGrid;
-    IList<Goal> goals;
+    List<Goal> goals = new List<Goal>();
+    IList<FinanceType> FinanceTypes = new List<FinanceType>();
+    IList<Goal> originalGoals = new List<Goal>();
 
     protected async override Task OnInitializedAsync()
     {
         var auth = await _authentication.GetAuthenticationStateAsync();
         string userId = auth.User.FindFirst(AppConstants.UserId).Value;
 
+        //load financial types for drop down editting
+        var financeTypes = await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
 
         //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
         //Check user details
         isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
 
         //Check goals
-        //isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
+        isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
 
         //Check financial stats
         isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
@@ -119,12 +125,20 @@ else
         }
         else
         {
-            //Request new goals
-            //goalListModel.goalList = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
-            goals = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
-            loadNewGoalsComplete = true;
+            //Grab the existing goals of the user if they exist
+            if(isExistsGoals)
+            {
+                originalGoals = await _goalRepo.GetByUserId(Endpoints.GoalsEndpoint, userId);
+                goals.AddRange(new List<Goal>(originalGoals));
+            }
+            loadComplete = true;
         }
+    }
 
+    private async void GenerateNewGoals()
+    {
+        var newGoals = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
+        goals.AddRange(newGoals);
     }
 
     void EditRow(Goal goal)
@@ -160,36 +174,22 @@ else
         goalsGrid.InsertRow(new Goal());
     }
 
-    void OnUpdateRow(Goal goal)
-    {
-        //dbContext.Update(order);
-
-        // For demo purposes only
-        //order.Customer = dbContext.Customers.Find(order.CustomerID);
-        //order.Employee = dbContext.Employees.Find(order.EmployeeID);
-
-        // For production
-        //dbContext.SaveChanges();
-    }
-
-    void OnCreateRow(Goal goal)
-    {
-        //dbContext.Add(order);
-
-        // For demo purposes only
-        //order.Customer = dbContext.Customers.Find(order.CustomerID);
-        //order.Employee = dbContext.Employees.Find(order.EmployeeID);
-
-        // For production
-        //dbContext.SaveChanges();
-    }
-
     public async void SaveGoals()
     {
         bool isAllSuccess = true;
         foreach(Goal goal in goals)
         {
-            var isSuccess = await _goalRepo.Create(Endpoints.GoalsEndpoint, goal);
+            bool isSuccess;
+            //if this was an original goal, then we need to do a put request. otherwise, post request
+            if(originalGoals.Contains(goal))
+            {
+                isSuccess = await _goalRepo.Create(Endpoints.GoalsEndpoint, goal);
+            }
+            else
+            {
+                isSuccess = await _goalRepo.Update(Endpoints.GoalsEndpoint, goal, goal.Id);
+            }
+            
             if (!isSuccess)
             {
                 isAllSuccess = false;
