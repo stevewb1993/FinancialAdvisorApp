@@ -7,6 +7,7 @@
 @inject IFinancialStatRepository _finStatRepo
 @inject HttpClient _client
 @inject ApiAuthenticationStateProvider _authentication
+@inject IToastService _toastService
 
 
 <h3 class="card-title">Goals Refresh</h3>
@@ -14,35 +15,72 @@
 @if (!loadComplete)
 {
     <LoadingMessage Message="Generating your goals..." />
-}
+ }
 else
 {
-    <EditForm Model="goalListModel" OnValidSubmit="SubmitGoals">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        @foreach (var goal in goalListModel.goalList)
-        {
-            <p>@goal.FinanceType.FinanceDesc</p>
-            <p>@goal.Justification</p>
-            <div class="form-group">
-                <label for="GoalValue">Goal Value</label>
-                <InputNumber @bind-Value="goal.GoalValue" class="form-control" id="GoalValue" />
-            </div>
-            <div class="form-group">
-                <label for="GoalStartDate">Goal Start Date</label>
-                <RadzenDatePicker @bind-Value="goal.GoalStartDate" DateFormat="d" id="GoalStartDate" />
-            </div>
-            <div class="form-group">
-                <label for="GoalDueDate">Goal Due Date</label>
-                <RadzenDatePicker @bind-Value="goal.DueDate" DateFormat="d" id="GoalDueDate" />
-            </div>
 
-        }
-        <button class="btn btn-primary" type="submit">
-            <span class="oi oi-pencil"></span>
-            Update Details
-        </button>
-    </EditForm>
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add" Click="@InsertRow" />
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Save" Click="@SaveGoals" />
+    <RadzenGrid @ref="goalsGrid" AllowFiltering="true" AllowPaging="true" PageSize="3" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@goals" TItem="Goal" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+        <Columns>
+            @*<RadzenGridColumn Width="100px" TItem="Goal" Property="Id" Title="Goal ID" />*@
+
+            <RadzenGridColumn Width="200px" TItem="Goal" Property="FinanceType.FinanceDesc" Title="Goal Type" />
+
+            <RadzenGridColumn Width="200px" TItem="Goal" Property="Justification" Title="Justification" />
+
+            <RadzenGridColumn Width="200px" TItem="Goal" Property="GoalValue" Title="Goal Value">
+                <EditTemplate Context="goal">
+                    <RadzenNumeric @bind-Value="goal.GoalValue" Data="@goals" TextProperty="GoalValue" ValueProperty="GoalValue" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="Goal" Property="GoalStartDate" Title="Start Date">
+                <Template Context="goal">
+                    @String.Format("{0:d}", goal.GoalStartDate)
+                </Template>
+                <EditTemplate Context="goal">
+                    <RadzenDatePicker @bind-Value="goal.GoalStartDate" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="Goal" Property="DueDate" Title="Due Date">
+                <Template Context="goal">
+                    @String.Format("{0:d}", goal.DueDate)
+                </Template>
+                <EditTemplate Context="goal">
+                    <RadzenDatePicker @bind-Value="goal.DueDate" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="Goal" Context="goal" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="100px">
+                <Template Context="goal">
+                    <RadzenButton Icon="edit" Size="ButtonSize.Small" Click="@(args => EditRow(goal))">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="goal">
+                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(goal))">
+                    </RadzenButton>
+                    <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(goal))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="Goal" Context="goal" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="70px">
+                <Template Context="goal">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(goal))">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="goal">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(goal))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenGridColumn>
+
+
+        </Columns>
+    </RadzenGrid>
 }
 
 @code {
@@ -53,6 +91,10 @@ else
     //private bool isExistsGoals;
     private bool isExistsUserDetails;
     private GoalListModel goalListModel = new GoalListModel();
+
+    //Datagrid
+    RadzenGrid<Goal> goalsGrid;
+    IList<Goal> goals;
 
     protected async override Task OnInitializedAsync()
     {
@@ -70,22 +112,100 @@ else
         //Check financial stats
         isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
 
-        if(!isExistsUserDetails | !isExistsFinancialStats)
+        if (!isExistsUserDetails | !isExistsFinancialStats)
         {
             _navManager.NavigateTo(AppConstants.LinkGoals);
         }
         else
         {
             //Request new goals
-            goalListModel.goalList = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
+            //goalListModel.goalList = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
+            goals = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
             loadComplete = true;
         }
 
     }
 
-    public async void SubmitGoals()
+    void EditRow(Goal goal)
     {
+        goalsGrid.EditRow(goal);
+    }
 
+    void SaveRow(Goal goal)
+    {
+        goalsGrid.UpdateRow(goal);
+    }
+
+    void CancelEdit(Goal goal)
+    {
+        goalsGrid.CancelEditRow(goal);
+    }
+
+    void DeleteRow(Goal goal)
+    {
+        if (goals.Contains(goal))
+        {
+            goals.Remove(goal);
+            goalsGrid.Reload();
+        }
+        else
+        {
+            goalsGrid.CancelEditRow(goal);
+        }
+    }
+
+    void InsertRow()
+    {
+        goalsGrid.InsertRow(new Goal());
+    }
+
+    void OnUpdateRow(Goal goal)
+    {
+        //dbContext.Update(order);
+
+        // For demo purposes only
+        //order.Customer = dbContext.Customers.Find(order.CustomerID);
+        //order.Employee = dbContext.Employees.Find(order.EmployeeID);
+
+        // For production
+        //dbContext.SaveChanges();
+    }
+
+    void OnCreateRow(Goal goal)
+    {
+        //dbContext.Add(order);
+
+        // For demo purposes only
+        //order.Customer = dbContext.Customers.Find(order.CustomerID);
+        //order.Employee = dbContext.Employees.Find(order.EmployeeID);
+
+        // For production
+        //dbContext.SaveChanges();
+    }
+
+    public async void SaveGoals()
+    {
+        bool isAllSuccess = true;
+        foreach(Goal goal in goals)
+        {
+            var isSuccess = await _goalRepo.Create(Endpoints.GoalsEndpoint, goal);
+            if (!isSuccess)
+            {
+                isAllSuccess = false;
+                _toastService.ShowError($"Something went wrong processing goal: {goal.Id} - {goal.FinanceType.FinanceDesc}");
+            }
+        }
+
+        if(isAllSuccess)
+        {
+            _toastService.ShowSuccess("Goals submitted successfully", "");
+        }
+        else
+        {
+            _toastService.ShowError("Something went wrong processing your request");
+        }
+
+        _navManager.NavigateTo(AppConstants.LinkGoals);
     }
 
 

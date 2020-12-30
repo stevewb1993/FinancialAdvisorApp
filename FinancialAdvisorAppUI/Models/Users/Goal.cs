@@ -1,4 +1,5 @@
-﻿using FinancialAdvisorAppUI.Models.Ref;
+﻿using FinancialAdvisorAppUI.Contracts.Models;
+using FinancialAdvisorAppUI.Models.Ref;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppUI.Models.Users
 {
-    public class Goal
+    public class Goal : UserData
     {
 
         [DisplayName("Due Name")]
