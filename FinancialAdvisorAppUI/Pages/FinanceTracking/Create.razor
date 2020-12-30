@@ -1,151 +1,247 @@
 ﻿@page "/financetracking/create/{dateId}"
 @using System.Globalization 
 @inject NavigationManager _navManager
-@inject IFinancialStatRepository _financialStatRepo
-@inject IFinanceTypeRepository _financeTypeRepo
+@inject IGoalRepository _goalRepo
+@inject IGoalGenerationRepository _goalGenRepo
+@inject IUserDetailRepository _userDetailRepo
+@inject IFinancialStatRepository _finStatRepo
+@inject IFinanceTypeRepository _finTypeRepo
 @inject HttpClient _client
+@inject ApiAuthenticationStateProvider _authentication
 @inject ApiAuthenticationStateProvider _authentication
 @inject IToastService _toastService
 
-<h3 class="card-title">Create a record of your financial stats</h3>
-<p>You don't need to add an entry for every stat type, but the more information you provide, the more targetted your goals will be.</p>
 
-<br />
+<h3 class="card-title">Financial Stats Entry</h3>
 
 
-<EditForm Model="financeStatsFullModel" OnValidSubmit="CreateFinancialStat">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    @foreach (var financeStat in financeStatsFullModel._financeStatsList)
-    {
-        <h5>Value of @financeStat.FinanceType.FinanceDesc</h5>
-        <div class="form-group">
-            <label for="FinanceValue"></label>
-            <InputNumber @bind-Value="financeStat.FinanceValue" class="form-control" id="FinanceValue" />
-        </div>
-    }
-    <button class="btn btn-primary" type="submit">
-        <span class="oi oi-pencil"></span>
-        Update Details
-    </button>
-</EditForm>
-
-
-
-
-@code
+@if (!loadComplete)
 {
+    <LoadingMessage Message="Loading your finances..." />
+}
+else
+{
+
+
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Entry" Click="@InsertRow" />
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Save" Click="@SaveFinanceStats" />
+    <RadzenGrid @ref="finStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@finStats" TItem="FinancialStat">
+        <Columns>
+
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceType.FinanceDesc" Title="Finance Type">
+                <EditTemplate Context="financialStat">
+                    <RadzenDropDown @bind-Value="financialStat.FinanceType.FinanceDesc" Data="@financeTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceValue" Title="Value">
+                <EditTemplate Context="financialStat">
+                    <RadzenNumeric @bind-Value="financialStat.FinanceValue" TextProperty="FinanceValue" ValueProperty="FinanceValue" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="InterestRate" Title="Interest Rate">
+                <EditTemplate Context="financialStat">
+                    <RadzenNumeric @bind-Value="financialStat.InterestRate" TextProperty="InterestRate" ValueProperty="InterestRate" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="FinancialStat" Context="financialStat" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="100px">
+                <Template Context="financialStat">
+                    <RadzenButton Icon="edit" Size="ButtonSize.Small" Click="@(args => EditRow(financialStat))">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="financialStat">
+                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(financialStat))">
+                    </RadzenButton>
+                    <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(financialStat))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="FinancialStat" Context="financialStat" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="70px">
+                <Template Context="financialStat">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(financialStat))">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="financialStat">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(financialStat))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenGridColumn>
+
+
+        </Columns>
+    </RadzenGrid>
+}
+
+@code {
+
+
     [Parameter]
     public string dateId { get; set; }
+    private DateTime financeDate;
 
-    //initialize models for editforms
-
-    private FinanceStatsFullModel financeStatsFullModel = new FinanceStatsFullModel();
-
-    //initialize variables used needed when user submit the forms (the functions can't be parameterized)
-    private List<FinanceType> financeTypes = new List<FinanceType>();
+    private bool loadComplete = false;
     private string userId;
     private bool isExistsFinancialStats;
-    private List<FinancialStat> userFinancialStats = new List<FinancialStat>();
+    private bool isExistsUserDetails;
 
-    private DateTime financeDate;
+    //Datagrid
+    RadzenGrid<FinancialStat> finStatsGrid;
+    List<FinancialStat> finStats = new List<FinancialStat>();
+    IList<FinancialStat> originalFinStats = new List<FinancialStat>();
+    private IList<FinanceType> financeTypes = new List<FinanceType>();
+    private IList<FinanceType> originalFinanceTypes = new List<FinanceType>();
+
+    //For tracking which goals are new vs original
+    private IList<string> originalfinStatsGuidList = new List<string>();
 
     protected async override Task OnInitializedAsync()
     {
-
         var auth = await _authentication.GetAuthenticationStateAsync();
         userId = auth.User.FindFirst(AppConstants.UserId).Value;
 
-        financeDate = DateTime.ParseExact(dateId,"yyyymmdd", CultureInfo.InvariantCulture);
-        Console.WriteLine(financeDate);
+        financeDate = DateTime.ParseExact(dateId, "yyyymmdd", CultureInfo.InvariantCulture);
 
-        financeTypes = await _financeTypeRepo.Get(Endpoints.FinanceTypesEndpoint) as List<FinanceType>;
+        //load financial types for drop down editting
+        financeTypes = await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
+        originalFinanceTypes = financeTypes;
 
-        isExistsFinancialStats = await _financialStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
+        foreach (var financeType in financeTypes)
+        {
+            Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
+        }
 
+
+
+        //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
+        //Check user details
+        isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
+
+
+        //Check financial stats
+        isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
+
+
+        //Grab the existing goals of the user if they exist
         if (isExistsFinancialStats)
         {
-            //only attempt to retreive existing financial stats if they exist. otherwise 404 response will break the page
-            //it's used for checking if submissions will be a post or put request
-            userFinancialStats = await _financialStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId) as List<FinancialStat>;
+            originalFinStats = await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
+            finStats.AddRange(new List<FinancialStat>(originalFinStats));
+            originalfinStatsGuidList = originalFinStats.Select(g => g.Id).ToList();
         }
+        loadComplete = true;
 
-        foreach (FinanceType financeType in financeTypes)
-        {
-
-            FinancialStat statToAdd = new FinancialStat(financeDate, financeType.Id, financeType);
-            financeStatsFullModel._financeStatsList.Add(statToAdd);
-
-        }
     }
 
 
-    private async void CreateFinancialStat()
+    private void EditRow(FinancialStat finStat)
     {
-        bool processSucceeded = true;
+        finStatsGrid.EditRow(finStat);
+    }
 
-        foreach (FinancialStat _financeStat in financeStatsFullModel._financeStatsList)
+    private void SaveRow(FinancialStat finStat)
+    {
+        finStatsGrid.UpdateRow(finStat);
+        Console.WriteLine("fin types after save");
+        foreach (var financeType in financeTypes)
         {
-            FinancialStat financeStat = _financeStat;
-            financeStat.FinanceType = null; //this stops Entity Framework trying to create a new record for the finance type
-            financeStat.UserId = userId;
-            bool isSuccess = false;
-            bool isExistsPreviousRecord = false;
+            Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
+        }
+        financeTypes = originalFinanceTypes;
+    }
 
-            if (isExistsFinancialStats)
-            {
-                var previousRecords = userFinancialStats.Where(x => x.FinanceDate == financeDate & x.FinanceTypeId == financeStat.FinanceTypeId).ToList();
-                isExistsPreviousRecord = previousRecords.Count > 0;
-                if (isExistsPreviousRecord) //record already exists. take existing request and submit put request
-                {
-                    string existingGuid = previousRecords.First().Id;
-                    financeStat.Id = existingGuid;// = new FinancialStat(financeDateModel.financeDate, financeTypeId, financeValue, userId, existingGuid);
-                    isSuccess = await _financialStatRepo.Update(Endpoints.FinancialStatsEndpoint, financeStat, existingGuid);
-                    if(isSuccess)
-                    {
-                        userFinancialStats.Remove(previousRecords.First());
-                        userFinancialStats.Add(financeStat);
-                    }
-                }
-            }
-            if (!isExistsPreviousRecord | !isExistsPreviousRecord) //no previous entry, create new guid and submit post request
-            {
-                Guid newRecordGuid = Guid.NewGuid();
-                financeStat.Id = newRecordGuid.ToString();
-                isSuccess = await _financialStatRepo.Create(Endpoints.FinancialStatsEndpoint, financeStat);
-                if(isSuccess)
-                {
-                    userFinancialStats.Add(financeStat);
-                    isExistsFinancialStats = true;
-                }
+    private void CancelEdit(FinancialStat finStat)
+    {
+        finStatsGrid.CancelEditRow(finStat);
+    }
 
+    private void DeleteRow(FinancialStat finStat)
+    {
+        if (finStats.Contains(finStat))
+        {
+            finStats.Remove(finStat);
+            finStatsGrid.Reload();
+        }
+        else
+        {
+            finStatsGrid.CancelEditRow(finStat);
+        }
+    }
+
+    private void InsertRow()
+    {
+        finStatsGrid.InsertRow(new FinancialStat(financeDate, userId, financeTypes.First(), financeTypes.First().Id));
+        //finStats.Add(newFinStat);
+        Console.WriteLine("fin types after insert");
+        foreach (var financeType in financeTypes)
+        {
+            Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
+        }
+    }
+
+    public async void SaveFinanceStats()
+    {
+        bool isAllSuccess = true;
+        foreach (FinancialStat finStat in finStats)
+        {
+            bool isSuccess;
+            FinancialStat finStatToSubmit = finStat;
+            //need to update this value since the ID of the finance type doesn't update when the user changes the finance type description
+            Console.WriteLine($"finstat finance desc: {finStat.FinanceType.FinanceDesc}");
+            foreach(var financeType in financeTypes)
+            {
+                Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
             }
+            var updatedFinanceTypeId = financeTypes.Where(x => x.FinanceDesc == finStat.FinanceType.FinanceDesc).FirstOrDefault().Id;
+            finStatToSubmit.FinanceTypeId = updatedFinanceTypeId;
+
+            //need to overwrite this as otherwise entity framework tries to add it to the finance types table
+            finStatToSubmit.FinanceType = null;
+
+            //if this was an original financial stat, then we need to do a put request. otherwise, post request
+            if (originalfinStatsGuidList.Contains(finStatToSubmit.Id))
+            {
+                isSuccess = await _finStatRepo.Update(Endpoints.FinancialStatsEndpoint, finStatToSubmit, finStatToSubmit.Id);
+            }
+            else
+            {
+                isSuccess = await _finStatRepo.Create(Endpoints.FinancialStatsEndpoint, finStatToSubmit);
+            }
+
             if (!isSuccess)
             {
-                processSucceeded = false;
-                _toastService.ShowError("Something went wong processing: " + financeStat.FinanceType.FinanceDesc);
+                isAllSuccess = false;
+                _toastService.ShowError($"Something went wrong processing financial stat: {finStatToSubmit.Id}");
             }
-
+        }
+        //for any financial stats in the original list that have been deleted, we need to submit a delete request
+        List<string> newFinStatGuidList = finStats.Select(g => g.Id).ToList();
+        foreach (FinancialStat originalFinStat in originalFinStats)
+        {
+            if (!newFinStatGuidList.Contains(originalFinStat.Id))
+            {
+                bool isDeleteSuccess = await _finStatRepo.Delete(Endpoints.FinancialStatsEndpoint, originalFinStat.Id);
+                if (!isDeleteSuccess)
+                {
+                    isAllSuccess = false;
+                    _toastService.ShowError($"Something went wrong processing goal: {originalFinStat.Id}");
+                }
+            }
         }
 
-        if (processSucceeded) _toastService.ShowSuccess("Details submitted successfully", "");
-        else _toastService.ShowError("Something went wrong");
+        if (isAllSuccess)
+        {
+            _toastService.ShowSuccess("Finances submitted successfully", "");
+        }
+        else
+        {
+            _toastService.ShowError("Something went wrong processing your request");
+        }
 
         _navManager.NavigateTo(AppConstants.LinkFinanceTracking);
-
-
-
-    }
-
-
-
-    public class FinanceStatsFullModel
-    {
-        public List<FinancialStat> _financeStatsList;
-        public FinanceStatsFullModel()
-        {
-            _financeStatsList = new List<FinancialStat>();
-        }
     }
 
 }

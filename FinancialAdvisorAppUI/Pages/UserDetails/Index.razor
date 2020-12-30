@@ -80,8 +80,7 @@
     {
         bool isSuccess;
 
-        var auth = await _authentication.GetAuthenticationStateAsync();
-        userDetailModel.Id = auth.User.FindFirst(AppConstants.UserId).Value;
+        userDetailModel.Id = userId;
 
         if (!isExistsUserDetails)
         {

@@ -17,6 +17,24 @@ namespace FinancialAdvisorAppUI.Models.Users
             FinanceType = financeType;
         }
 
+        /// <summary>
+        /// This construcor initializes the fin stat with some holding values. Only to be used with the create fin stat user page
+        /// </summary>
+        /// <param name="financeDate"></param>
+        /// <param name="userId"></param>
+        /// <param name="financeType"></param>
+        /// <param name="financeTypeId"></param>
+        public FinancialStat(DateTime financeDate, string userId, FinanceType financeType = null, string financeTypeId = null)
+        {
+            FinanceDate = financeDate;
+            UserId = userId;
+            Id = Guid.NewGuid().ToString();
+            FinanceTypeId = financeTypeId;
+            FinanceType = financeType;
+
+
+        }
+
         public FinancialStat()
         {
         }
