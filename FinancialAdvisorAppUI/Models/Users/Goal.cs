@@ -22,5 +22,29 @@ namespace FinancialAdvisorAppUI.Models.Users
         public DateTime GoalStartDate { get; set; }
         [DisplayName("Type of goal")]
         public virtual FinanceType FinanceType { get; set; }
+
+        public string FinanceDesc { get; set; }
+
+        public Goal(string userId)
+        {
+            UserId = userId;
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public Goal(string userId, string justification)
+        {
+            UserId = userId;
+            Id = Guid.NewGuid().ToString();
+            Justification = justification;
+        }
+
+
+
+
+        public Goal()
+        {
+
+        }
+
     }
 }

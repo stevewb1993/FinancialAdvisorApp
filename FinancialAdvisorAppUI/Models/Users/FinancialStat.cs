@@ -60,6 +60,7 @@ namespace FinancialAdvisorAppUI.Models.Users
 
         public DateTime FinanceDate { get; set; }
         public string FinanceTypeId { get; set; }
+        public string FinanceDesc { get; set; }
         [Required]
         public decimal FinanceValue { get; set; }
         public decimal InterestRate { get; set; }

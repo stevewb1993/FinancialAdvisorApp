@@ -29,9 +29,9 @@ else
                 Data="@finStats" TItem="FinancialStat">
         <Columns>
 
-            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceType.FinanceDesc" Title="Finance Type">
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceDesc" Title="Finance Type">
                 <EditTemplate Context="financialStat">
-                    <RadzenDropDown @bind-Value="financialStat.FinanceType.FinanceDesc" Data="@financeTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%" />
+                    <RadzenDropDown @bind-Value="financialStat.FinanceDesc" Data="@financeTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%" />
                 </EditTemplate>
             </RadzenGridColumn>
 
@@ -114,8 +114,6 @@ else
             Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
         }
 
-
-
         //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
         //Check user details
         isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
@@ -129,6 +127,12 @@ else
         if (isExistsFinancialStats)
         {
             originalFinStats = await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
+
+            foreach(var finStat in originalFinStats)
+            {
+                finStat.FinanceDesc = finStat.FinanceType.FinanceDesc;
+            }
+
             finStats.AddRange(new List<FinancialStat>(originalFinStats));
             originalfinStatsGuidList = originalFinStats.Select(g => g.Id).ToList();
         }
@@ -145,17 +149,12 @@ else
     private void SaveRow(FinancialStat finStat)
     {
         finStatsGrid.UpdateRow(finStat);
-        Console.WriteLine("fin types after save");
-        foreach (var financeType in financeTypes)
-        {
-            Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
-        }
-        financeTypes = originalFinanceTypes;
     }
 
     private void CancelEdit(FinancialStat finStat)
     {
         finStatsGrid.CancelEditRow(finStat);
+        finStats.Remove(finStat);
     }
 
     private void DeleteRow(FinancialStat finStat)
@@ -173,13 +172,9 @@ else
 
     private void InsertRow()
     {
-        finStatsGrid.InsertRow(new FinancialStat(financeDate, userId, financeTypes.First(), financeTypes.First().Id));
-        //finStats.Add(newFinStat);
-        Console.WriteLine("fin types after insert");
-        foreach (var financeType in financeTypes)
-        {
-            Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
-        }
+        var newFinStat = new FinancialStat(financeDate, userId);
+        finStatsGrid.InsertRow(newFinStat);
+        finStats.Add(newFinStat);
     }
 
     public async void SaveFinanceStats()
@@ -190,12 +185,8 @@ else
             bool isSuccess;
             FinancialStat finStatToSubmit = finStat;
             //need to update this value since the ID of the finance type doesn't update when the user changes the finance type description
-            Console.WriteLine($"finstat finance desc: {finStat.FinanceType.FinanceDesc}");
-            foreach(var financeType in financeTypes)
-            {
-                Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
-            }
-            var updatedFinanceTypeId = financeTypes.Where(x => x.FinanceDesc == finStat.FinanceType.FinanceDesc).FirstOrDefault().Id;
+            Console.WriteLine($"finstat finance desc: {finStat.FinanceDesc}");
+            var updatedFinanceTypeId = financeTypes.Where(x => x.FinanceDesc == finStat.FinanceDesc).FirstOrDefault().Id;
             finStatToSubmit.FinanceTypeId = updatedFinanceTypeId;
 
             //need to overwrite this as otherwise entity framework tries to add it to the finance types table

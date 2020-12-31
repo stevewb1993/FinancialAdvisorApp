@@ -24,22 +24,20 @@ else
 
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Generate new intelligent goals" Click="@GenerateNewGoals" />
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Manual Entry" Click="@InsertRow" />
-    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add" Click="@InsertRow" />
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Save" Click="@SaveGoals" />
     <RadzenGrid @ref="goalsGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                Data="@goals" TItem="Goal" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+                Data="@goals" TItem="Goal">
         <Columns>
 
-            <RadzenGridColumn Width="200px" TItem="Goal" Property="FinanceType.FinanceDesc" Title="Goal Type">
+            <RadzenGridColumn Width="200px" TItem="Goal" Property="FinanceDesc" Title="Goal Type">
                 <EditTemplate Context="goal">
-                    <RadzenDropDown @bind-Value="goal.FinanceType.FinanceDesc" Data="@financeTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%" />
+                    <RadzenDropDown @bind-Value="goal.FinanceDesc" Data="@financeTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%" />
                 </EditTemplate>
             </RadzenGridColumn>
 
             <RadzenGridColumn Width="200px" TItem="Goal" Property="Justification" Title="Justification">
                 <EditTemplate Context="goal">
                     <RadzenTextBox @bind-Value="goal.Justification" Style="width:100%; display: block" Name="Justification" />
-                    <RadzenRequiredValidator Text="Justification is required" Component="ShipName" Popup="true" />
                 </EditTemplate>
             </RadzenGridColumn>
 
@@ -141,6 +139,12 @@ else
             if (isExistsGoals)
             {
                 originalGoals = await _goalRepo.GetByUserId(Endpoints.GoalsEndpoint, userId);
+
+                foreach(var goal in originalGoals)
+                {
+                    goal.FinanceDesc = goal.FinanceType.FinanceDesc;
+                }
+
                 goals.AddRange(new List<Goal>(originalGoals));
                 originalGoalsGuidList = originalGoals.Select(g => g.Id).ToList();
             }
@@ -185,26 +189,12 @@ else
 
     void InsertRow()
     {
-        goalsGrid.InsertRow(new Goal());
+        var goaltoAdd = new Goal(userId, "Add your own justification");
+        goalsGrid.InsertRow(goaltoAdd);
+        goals.Add(goaltoAdd);
     }
 
-    void OnCreateRow(Goal goal)
-    {
-        goals.Add(goal);
 
-    }
-
-    void OnUpdateRow(Goal goal)
-    {
-        //dbContext.Update(order);
-
-        // For demo purposes only
-        //order.Customer = dbContext.Customers.Find(order.CustomerID);
-        //order.Employee = dbContext.Employees.Find(order.EmployeeID);
-
-        // For production
-        //dbContext.SaveChanges();
-    }
 
     public async void SaveGoals()
     {
