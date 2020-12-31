@@ -1,5 +1,5 @@
 ﻿@page "/financetracking/create/{dateId}"
-@using System.Globalization 
+@using System.Globalization
 @inject NavigationManager _navManager
 @inject IGoalRepository _goalRepo
 @inject IGoalGenerationRepository _goalGenRepo
@@ -21,17 +21,20 @@
 }
 else
 {
+    <RadzenButton Icon="check_circle" style="margin-bottom: 10px" Text="Save" Click="@SaveFinanceStats" />
+    <br />
 
+    <h5 class="card-title">Stock Variables</h5>
 
-    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Entry" Click="@InsertRow" />
-    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Save" Click="@SaveFinanceStats" />
-    <RadzenGrid @ref="finStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="20" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                Data="@finStats" TItem="FinancialStat">
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Entry" Click="@((args) => InsertRow(stockFinStatsGrid, stockFinStats))" />
+    <RadzenGrid @ref="stockFinStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="6" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@stockFinStats" TItem="FinancialStat">
         <Columns>
 
             <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceDesc" Title="Finance Type">
                 <EditTemplate Context="financialStat">
-                    <RadzenDropDown @bind-Value="financialStat.FinanceDesc" Data="@financeTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%" />
+                    <RadzenDropDown @bind-Value="financialStat.FinanceDesc" Data="@stockFinanceTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%; display: block" Name="FinanceDescInput" />
+                    <RadzenRequiredValidator Text="Finance type is required" Component="FinanceDescInput" Popup="true" />
                 </EditTemplate>
             </RadzenGridColumn>
 
@@ -49,24 +52,74 @@ else
 
             <RadzenGridColumn TItem="FinancialStat" Context="financialStat" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="100px">
                 <Template Context="financialStat">
-                    <RadzenButton Icon="edit" Size="ButtonSize.Small" Click="@(args => EditRow(financialStat))">
+                    <RadzenButton Icon="edit" Size="ButtonSize.Small" Click="@(args => EditRow(stockFinStatsGrid, financialStat))">
                     </RadzenButton>
                 </Template>
                 <EditTemplate Context="financialStat">
-                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(financialStat))">
+                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(stockFinStatsGrid, financialStat, stockFinanceTypes))">
                     </RadzenButton>
-                    <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(financialStat))">
+                    <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(stockFinStatsGrid, stockFinStats, financialStat))">
                     </RadzenButton>
                 </EditTemplate>
             </RadzenGridColumn>
 
             <RadzenGridColumn TItem="FinancialStat" Context="financialStat" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="70px">
                 <Template Context="financialStat">
-                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(financialStat))">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(stockFinStatsGrid, stockFinStats, financialStat))">
                     </RadzenButton>
                 </Template>
                 <EditTemplate Context="financialStat">
-                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(financialStat))">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(stockFinStatsGrid, stockFinStats, financialStat))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenGridColumn>
+
+        </Columns>
+    </RadzenGrid>
+
+    <br />
+
+    <h5 class="card-title">Flow Variables</h5>
+
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Entry" Click="@((args) => InsertRow(flowFinStatsGrid, flowFinStats))" />
+
+    <RadzenGrid @ref="flowFinStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="6" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                Data="@flowFinStats" TItem="FinancialStat">
+        <Columns>
+
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceDesc" Title="Finance Type">
+                <EditTemplate Context="financialStat">
+                    <RadzenDropDown @bind-Value="financialStat.FinanceDesc" Data="@flowFinanceTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%; display: block" Name="FinanceDescInput" />
+                    <RadzenRequiredValidator Text="Finance type is required" Component="FinanceDescInput" Popup="true" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceValue" Title="Value">
+                <EditTemplate Context="financialStat">
+                    <RadzenNumeric @bind-Value="financialStat.FinanceValue" TextProperty="FinanceValue" ValueProperty="FinanceValue" Style="width:100%" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="FinancialStat" Context="financialStat" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="100px">
+                <Template Context="financialStat">
+                    <RadzenButton Icon="edit" Size="ButtonSize.Small" Click="@(args => EditRow(flowFinStatsGrid, financialStat))">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="financialStat">
+                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(flowFinStatsGrid, financialStat, flowFinanceTypes))">
+                    </RadzenButton>
+                    <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(flowFinStatsGrid, flowFinStats, financialStat))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn TItem="FinancialStat" Context="financialStat" Bubble="false" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="70px">
+                <Template Context="financialStat">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(flowFinStatsGrid, flowFinStats, financialStat))">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="financialStat">
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Click="@(args => DeleteRow(flowFinStatsGrid, flowFinStats, financialStat))">
                     </RadzenButton>
                 </EditTemplate>
             </RadzenGridColumn>
@@ -74,7 +127,7 @@ else
 
         </Columns>
     </RadzenGrid>
-}
+}}
 
 @code {
 
@@ -89,11 +142,15 @@ else
     private bool isExistsUserDetails;
 
     //Datagrid
-    RadzenGrid<FinancialStat> finStatsGrid;
+    RadzenGrid<FinancialStat> stockFinStatsGrid;
+    RadzenGrid<FinancialStat> flowFinStatsGrid;
     List<FinancialStat> finStats = new List<FinancialStat>();
+    List<FinancialStat> stockFinStats = new List<FinancialStat>();
+    List<FinancialStat> flowFinStats = new List<FinancialStat>();
     IList<FinancialStat> originalFinStats = new List<FinancialStat>();
     private IList<FinanceType> financeTypes = new List<FinanceType>();
-    private IList<FinanceType> originalFinanceTypes = new List<FinanceType>();
+    private List<string> stockFinanceTypes = new List<string>();
+    private List<string> flowFinanceTypes = new List<string>();
 
     //For tracking which goals are new vs original
     private IList<string> originalfinStatsGuidList = new List<string>();
@@ -107,7 +164,8 @@ else
 
         //load financial types for drop down editting
         financeTypes = await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
-        originalFinanceTypes = financeTypes;
+        stockFinanceTypes = financeTypes.Where(x => x.StockOrFlow == "Stock").Select(x => x.FinanceDesc).ToList();
+        flowFinanceTypes = financeTypes.Where(x => x.StockOrFlow == "Flow").Select(x => x.FinanceDesc).ToList();
 
         //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
         //Check user details
@@ -123,58 +181,73 @@ else
         {
             originalFinStats = await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
 
-            foreach(var finStat in originalFinStats)
+            foreach (var finStat in originalFinStats)
             {
                 finStat.FinanceDesc = finStat.FinanceType.FinanceDesc;
             }
 
             finStats.AddRange(new List<FinancialStat>(originalFinStats));
+            flowFinStats = finStats.Where(x => flowFinanceTypes.Contains(x.FinanceDesc)).ToList();
+
+            stockFinStats = finStats.Where(x => stockFinanceTypes.Contains(x.FinanceDesc)).ToList();
             originalfinStatsGuidList = originalFinStats.Select(g => g.Id).ToList();
+
+            //filter available drop downs for finance types which have not already been taken up
+            var flowFinanceTypesInUse = flowFinStats.Select(x => x.FinanceDesc).ToList();
+            flowFinanceTypes.RemoveAll(x => flowFinanceTypesInUse.Contains(x));
+
+            var stockFinanceTypesInUse = stockFinStats.Select(x => x.FinanceDesc).ToList();
+            stockFinanceTypes.RemoveAll(x => stockFinanceTypesInUse.Contains(x));
         }
         loadComplete = true;
 
     }
 
 
-    private void EditRow(FinancialStat finStat)
+    private void EditRow(RadzenGrid<FinancialStat> radzenGrid, FinancialStat finStat)
     {
-        finStatsGrid.EditRow(finStat);
+        radzenGrid.EditRow(finStat);
     }
 
-    private void SaveRow(FinancialStat finStat)
+    private void SaveRow(RadzenGrid<FinancialStat> radzenGrid, FinancialStat finStat, List<string> dropDownList)
     {
-        finStatsGrid.UpdateRow(finStat);
+        radzenGrid.UpdateRow(finStat);
+        dropDownList.RemoveAll(x => x == finStat.FinanceDesc);
     }
 
-    private void CancelEdit(FinancialStat finStat)
+    private void CancelEdit(RadzenGrid<FinancialStat> radzenGrid, IList<FinancialStat> radzenData, FinancialStat finStat)
     {
-        finStatsGrid.CancelEditRow(finStat);
-        finStats.Remove(finStat);
+        radzenGrid.CancelEditRow(finStat);
+        radzenData.Remove(finStat);
     }
 
-    private void DeleteRow(FinancialStat finStat)
+    private void DeleteRow(RadzenGrid<FinancialStat> radzenGrid, IList<FinancialStat> radzenData, FinancialStat finStat)
     {
-        if (finStats.Contains(finStat))
+        if (radzenData.Contains(finStat))
         {
-            finStats.Remove(finStat);
-            finStatsGrid.Reload();
+            radzenData.Remove(finStat);
+            radzenGrid.Reload();
         }
         else
         {
-            finStatsGrid.CancelEditRow(finStat);
+            radzenGrid.CancelEditRow(finStat);
         }
     }
 
-    private void InsertRow()
+    private void InsertRow(RadzenGrid<FinancialStat> radzenGrid, IList<FinancialStat> radzenData)
     {
         var newFinStat = new FinancialStat(financeDate, userId);
-        finStatsGrid.InsertRow(newFinStat);
-        finStats.Add(newFinStat);
+        radzenGrid.InsertRow(newFinStat);
+        radzenData.Add(newFinStat);
     }
 
     public async void SaveFinanceStats()
     {
         bool isAllSuccess = true;
+
+        finStats = stockFinStats;
+        finStats.AddRange(flowFinStats);
+
         foreach (FinancialStat finStat in finStats)
         {
             bool isSuccess;
