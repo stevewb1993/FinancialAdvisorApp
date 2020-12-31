@@ -103,16 +103,11 @@ else
         var auth = await _authentication.GetAuthenticationStateAsync();
         userId = auth.User.FindFirst(AppConstants.UserId).Value;
 
-        financeDate = DateTime.ParseExact(dateId, "yyyymmdd", CultureInfo.InvariantCulture);
+        financeDate = DateTime.ParseExact(dateId, "yyyyMMdd", CultureInfo.InvariantCulture);
 
         //load financial types for drop down editting
         financeTypes = await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
         originalFinanceTypes = financeTypes;
-
-        foreach (var financeType in financeTypes)
-        {
-            Console.WriteLine($"finance type description: {financeType.FinanceDesc}");
-        }
 
         //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
         //Check user details

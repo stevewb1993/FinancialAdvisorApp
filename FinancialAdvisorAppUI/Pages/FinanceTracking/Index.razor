@@ -30,8 +30,8 @@ else
         </p>
     }
 
-    <RadzenDatePicker @bind-Value=@financeDate DateFormat="d" />
-    <button @onclick="@(e => _navManager.NavigateTo($"{AppConstants.LinkFinanceTracking}create/{financeDate.ToString("yyyymmdd")}"))" class="btn btn-outline-secondary">
+    <RadzenDatePicker @bind-Value=@financeDate DateFormat="yyyy-MM-dd" />
+    <button @onclick="@(e => OnSubmit())" class="btn btn-outline-secondary">
         <span class="oi oi-fork"></span>
         Create finance entry
     </button>
@@ -50,6 +50,7 @@ else
 
         var auth = await _authentication.GetAuthenticationStateAsync();
         string userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        financeDate = DateTime.Now;
         Console.WriteLine($"user id: {userId}");
 
         //Check user details
@@ -59,8 +60,10 @@ else
     }
 
 
-    void OnChange(DateTime? value, string name, string format)
+    void OnSubmit()
     {
-
+        Console.WriteLine(financeDate);
+        Console.WriteLine(financeDate.ToShortDateString());
+        _navManager.NavigateTo($"{AppConstants.LinkFinanceTracking}create/{financeDate.ToString("yyyyMMdd")}");
     }
 }
