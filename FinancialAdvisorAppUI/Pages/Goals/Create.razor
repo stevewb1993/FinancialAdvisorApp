@@ -155,6 +155,12 @@ else
     private async void GenerateNewGoals()
     {
         var newGoals = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
+
+        foreach(var goal in newGoals)
+        {
+            goal.FinanceDesc = goal.FinanceType.FinanceDesc;
+        }
+
         goals.AddRange(newGoals);
         await goalsGrid.Reload();
     }
