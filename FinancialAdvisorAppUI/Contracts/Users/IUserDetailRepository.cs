@@ -10,6 +10,6 @@ namespace FinancialAdvisorAppUI.Contracts.Users
 {
     public interface IUserDetailRepository : IBaseRepository<UserDetail>
     {
-
+        Task<bool> CheckUserHasCompletedDetailsForm(int userId);
     }
 }

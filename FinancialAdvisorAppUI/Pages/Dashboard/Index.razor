@@ -1,0 +1,103 @@
+﻿@page "/dashboard/"
+
+@inject NavigationManager _navManager
+@inject IGoalRepository _goalRepo
+@inject IFinancialStatRepository _finStatRepo
+@inject IUserDetailRepository _userDetailRepo
+@inject HttpClient _client
+@inject ApiAuthenticationStateProvider _authentication
+
+<h3 class="card-title">Dashboard</h3>
+<hr />
+<br />
+
+@if (!loadComplete)
+{
+    <LoadingMessage Message="Loading your details..." />
+}
+else
+{
+    @if (!isExistsUserDetails)
+    {
+        <div>
+            Please provide some additional information about yourself so we can create suitable goals for you
+        </div>
+
+
+        <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(linkUserDetails))">
+            <span class="oi oi-fork"></span>
+            Update user details
+        </button>
+    }
+
+    @if (!isExistsFinancialStats)
+    {
+        <div>
+            Please provide some additional information about your finances so we can create suitable goals for you
+        </div>
+    }
+    <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(AppConstants.LinkFinanceTracking))">
+        <span class="oi oi-fork"></span>
+        Update financial stats
+    </button>
+
+    @if (!isExistsGoals & isExistsFinancialStats)
+    {
+        <div>
+            You haven't create any goals yet!
+        </div>
+    }
+    @if (isExistsFinancialStats)
+    {
+        <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(AppConstants.LinkGoalsUpdate))">
+            <span class="oi oi-fork"></span>
+            Update Goals
+        </button>
+    }
+
+
+
+
+    @if (isExistsFinancialStats)
+    {
+        <p>Placeholder for dashboard</p>
+    }
+}
+
+
+
+@code {
+
+
+    private bool isExistsUserDetails;
+    private bool isExistsGoals;
+    private bool isExistsFinancialStats;
+    private string linkUserDetails = "/userdetails/";
+    private string linkUpdateFinStats = "/financialstats/create/";
+    private bool loadComplete = false;
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var auth = await _authentication.GetAuthenticationStateAsync();
+        int userId = Int32.Parse(auth.User.FindFirst(AppConstants.UserId).Value);
+        Console.WriteLine($"user id: {userId}");
+
+        //Check user details
+        isExistsUserDetails = await _userDetailRepo.CheckUserHasCompletedDetailsForm(userId);
+        Console.WriteLine(isExistsUserDetails);
+
+        //Check goals
+        isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
+        Console.WriteLine(isExistsGoals);
+
+        //Check financial stats
+        isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
+        Console.WriteLine(isExistsFinancialStats);
+        loadComplete = true;
+
+
+    }
+}

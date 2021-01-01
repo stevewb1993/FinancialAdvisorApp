@@ -126,7 +126,7 @@ else
 
         //user needs to have submitted all required data to generate goals. Check these all exist. If not, redirect them
         //Check user details
-        isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);
+        isExistsUserDetails = await _userDetailRepo.CheckUserHasCompletedDetailsForm(userId);
 
         //Check goals
         isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);

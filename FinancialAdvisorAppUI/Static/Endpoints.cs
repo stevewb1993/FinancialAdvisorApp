@@ -32,5 +32,6 @@ namespace FinancialAdvisorAppUI.Static
         public const string LinkLogin = "/login/";
         public const string LinkRegister = "/register/";
         public const string LinkLogout = "/logout/";
+        public const string LinkDashboard = "/dashboard/";
     }
 }

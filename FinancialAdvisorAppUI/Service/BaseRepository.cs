@@ -117,7 +117,7 @@ namespace FinancialAdvisorAppUI.Service
             return false;
         }
 
-        private async Task<string> GetBearerToken()
+        protected async Task<string> GetBearerToken()
         {
             return await _localStorage.GetItemAsync<string>("authToken");
         }
