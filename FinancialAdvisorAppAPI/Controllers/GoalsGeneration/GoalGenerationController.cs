@@ -63,12 +63,12 @@ namespace FinancialAdvisorAppAPI.Controllers.GoalsGeneration
             //get user financialstats
             string location = _financialStatHelperFunctions.GetControllerActionNames(ControllerContext);
             UserDetail userDetail = new UserDetail();
-            IList<FinancialStat> financialStatList = new List<FinancialStat>();
-            IList<FinanceType> financeTypeList = new List<FinanceType>();
+            List<FinancialStat> financialStatList = new List<FinancialStat>();
+            List<FinanceType> financeTypeList = new List<FinanceType>();
             try
             {
                 _logger.LogInfo($"{location}: Attempted Call for id: {userId}");
-                financialStatList = await _financialStatRepository.FindAllByUserId(userId);
+                financialStatList = (List<FinancialStat>) await  _financialStatRepository.FindAllByUserId(userId);
 
                 if (financialStatList == null || financialStatList.Count == 0)
                 {
@@ -101,7 +101,7 @@ namespace FinancialAdvisorAppAPI.Controllers.GoalsGeneration
             //get finance type list
             try
             {
-                financeTypeList = await _financeTypeRepository.FindAll();
+                financeTypeList = (List<FinanceType>)await _financeTypeRepository.FindAll();
             }
             catch (Exception e)
             {
@@ -109,13 +109,10 @@ namespace FinancialAdvisorAppAPI.Controllers.GoalsGeneration
             }
 
             //Generate new goals
-            List<Goal> generatedGoals = GoalGenerator.GenerateGoals(userDetail, financialStatList, financeTypeList);
+            GoalGenerator goalGenerator = new GoalGenerator(userDetail, financeTypeList, financialStatList);
+            List<Goal> generatedGoals = goalGenerator.GenerateGoals();
             return Ok(generatedGoals);
 
         }
-
-
-
-
     }
 }

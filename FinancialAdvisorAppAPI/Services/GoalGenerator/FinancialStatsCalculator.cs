@@ -15,32 +15,13 @@ namespace FinancialAdvisorAppAPI.Services.GoalGenerator
         /// <param name="userFinances"></param>
         /// <param name="financeTypes"></param>
         /// <returns></returns>
-        public static List<FinancialStat> getLatestFinanceData(IList<FinancialStat> userFinances, List<FinanceType> financeTypes)
+        public static List<FinancialStat> getLatestFinanceData(IList<FinancialStat> userFinances)
         {
-            List<FinancialStat> latestFinances = new List<FinancialStat>();
-
-
-            foreach (var financeType in financeTypes)
-            {
-                DateTime? latestAvailableDate = null;
-                FinancialStat latestStat = new FinancialStat();
-
-                List<FinancialStat> relevantFinancialStats = userFinances.Where(x => x.FinanceType.Id == financeType.Id).ToList();
-
-                foreach(var finStat in relevantFinancialStats)
-                {
-                    if(finStat.FinanceDate > latestAvailableDate | latestAvailableDate == null)
-                    {
-                        latestAvailableDate = finStat.FinanceDate;
-                        latestStat = finStat;
-                    }
-                }
-
-                latestFinances.Add(latestStat);
-
-            }
-            return (List<FinancialStat>)userFinances;
+            DateTime latestDate = userFinances.Select(x => x.FinanceDate).Max();
+            return userFinances.Where(x => x.FinanceDate == latestDate).ToList();
         }
+
+
 
         /// <summary>
         /// calculate full disposable income. userFinances must be provided with the latest financial data

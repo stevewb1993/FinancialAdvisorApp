@@ -41,7 +41,7 @@ else
         </button>
     }
 
-    @if (isExistsUserDetails)// & isExistsFinancialStats)
+    @if (isExistsUserDetails & isExistsFinancialStats)
     {
         <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(AppConstants.LinkGoalsUpdate))">
             <span class="oi oi-fork"></span>

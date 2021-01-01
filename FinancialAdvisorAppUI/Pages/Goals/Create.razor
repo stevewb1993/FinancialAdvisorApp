@@ -21,6 +21,7 @@
 else
 {
 
+    //width: 100 %; display: block;
 
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Generate new intelligent goals" Click="@GenerateNewGoals" />
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Manual Entry" Click="@InsertRow" />
@@ -37,7 +38,7 @@ else
 
             <RadzenGridColumn Width="200px" TItem="Goal" Property="Justification" Title="Justification">
                 <EditTemplate Context="goal">
-                    <RadzenTextBox @bind-Value="goal.Justification" Style="width:100%; display: block" Name="Justification" />
+                    <RadzenTextArea @bind-Value="goal.Justification" Style="white-space: pre-wrap" Name="Justification" />
                 </EditTemplate>
             </RadzenGridColumn>
 
@@ -156,13 +157,20 @@ else
     {
         var newGoals = await _goalGenRepo.GetById(Endpoints.GoalGenerationEndpoint, userId);
 
-        foreach(var goal in newGoals)
+        if(newGoals.Count > 0)
         {
-            goal.FinanceDesc = goal.FinanceType.FinanceDesc;
+            foreach (var goal in newGoals)
+            {
+                goal.FinanceDesc = goal.FinanceType.FinanceDesc;
+                goals.AddRange(newGoals);
+                await goalsGrid.Reload();
+                _toastService.ShowSuccess("New goals successfully generated");
+            }
         }
-
-        goals.AddRange(newGoals);
-        await goalsGrid.Reload();
+        else
+        {
+            _toastService.ShowWarning("Based on your financial information, we have no goals we can suggest. Feel free to create your own!");
+        }
     }
 
     void EditRow(Goal goal)
