@@ -15,7 +15,7 @@ namespace FinancialAdvisorAppUI.Models.Users
         [DisplayName("Due Name")]
         public DateTime DueDate { get; set; }
         public string Justification { get; set; }
-        public int FinanceTypeId { get; set; }
+        public int? FinanceTypeId { get; set; }
         [DisplayName("Goal Value")]
         public decimal GoalValue { get; set; }
         [DisplayName("Goal Start Date")]

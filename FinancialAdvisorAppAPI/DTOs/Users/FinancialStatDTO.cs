@@ -14,6 +14,7 @@ namespace FinancialAdvisorAppAPI.DTOs.Users
         public int FinanceTypeId { get; set; }
         public decimal FinanceValue { get; set; }
         public decimal InterestRate { get; set; }
+        public string UserFriendlyName { get; set; }
 
         public virtual FinanceTypeDTO FinanceType { get; set; }
         public virtual UserDetailDTO User { get; set; }

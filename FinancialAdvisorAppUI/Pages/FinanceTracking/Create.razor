@@ -27,7 +27,7 @@ else
     <h5 class="card-title">Stock Variables</h5>
 
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Entry" Click="@((args) => InsertRow(stockFinStatsGrid, stockFinStats))" />
-    <RadzenGrid @ref="stockFinStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="6" AllowSorting="true" EditMode="DataGridEditMode.Single"
+    <RadzenGrid @ref="stockFinStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
                 Data="@stockFinStats" TItem="FinancialStat">
         <Columns>
 
@@ -35,6 +35,13 @@ else
                 <EditTemplate Context="financialStat">
                     <RadzenDropDown @bind-Value="financialStat.FinanceDesc" Data="@stockFinanceTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%; display: block" Name="FinanceDescInput" />
                     <RadzenRequiredValidator Text="Finance type is required" Component="FinanceDescInput" Popup="true" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="UserFriendlyName" Title="Name">
+                <EditTemplate Context="financialStat">
+                    <RadzenTextBox @bind-Value="financialStat.UserFriendlyName" Style="width:100%; display: block" Name="UserFriendlyNameInput" />
+                    <RadzenRequiredValidator Text="Name is required" Component="UserFriendlyNameInput" Popup="true" />
                 </EditTemplate>
             </RadzenGridColumn>
 
@@ -56,7 +63,7 @@ else
                     </RadzenButton>
                 </Template>
                 <EditTemplate Context="financialStat">
-                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(stockFinStatsGrid, financialStat, stockFinanceTypes))">
+                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(stockFinStatsGrid, financialStat))">
                     </RadzenButton>
                     <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(stockFinStatsGrid, stockFinStats, financialStat))">
                     </RadzenButton>
@@ -83,7 +90,7 @@ else
 
     <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add Entry" Click="@((args) => InsertRow(flowFinStatsGrid, flowFinStats))" />
 
-    <RadzenGrid @ref="flowFinStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="6" AllowSorting="true" EditMode="DataGridEditMode.Single"
+    <RadzenGrid @ref="flowFinStatsGrid" AllowFiltering="true" AllowPaging="true" PageSize="10" AllowSorting="true" EditMode="DataGridEditMode.Single"
                 Data="@flowFinStats" TItem="FinancialStat">
         <Columns>
 
@@ -91,6 +98,13 @@ else
                 <EditTemplate Context="financialStat">
                     <RadzenDropDown @bind-Value="financialStat.FinanceDesc" Data="@flowFinanceTypes" TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Style="width:100%; display: block" Name="FinanceDescInput" />
                     <RadzenRequiredValidator Text="Finance type is required" Component="FinanceDescInput" Popup="true" />
+                </EditTemplate>
+            </RadzenGridColumn>
+
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="UserFriendlyName" Title="Name">
+                <EditTemplate Context="financialStat">
+                    <RadzenTextBox @bind-Value="financialStat.UserFriendlyName" Style="width:100%; display: block" Name="UserFriendlyNameInput" />
+                    <RadzenRequiredValidator Text="Name is required" Component="UserFriendlyNameInput" Popup="true" />
                 </EditTemplate>
             </RadzenGridColumn>
 
@@ -106,7 +120,7 @@ else
                     </RadzenButton>
                 </Template>
                 <EditTemplate Context="financialStat">
-                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(flowFinStatsGrid, financialStat, flowFinanceTypes))">
+                    <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(flowFinStatsGrid, financialStat))">
                     </RadzenButton>
                     <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(flowFinStatsGrid, flowFinStats, financialStat))">
                     </RadzenButton>
@@ -127,7 +141,7 @@ else
 
         </Columns>
     </RadzenGrid>
-}}
+}
 
 @code {
 
@@ -147,13 +161,13 @@ else
     List<FinancialStat> finStats = new List<FinancialStat>();
     List<FinancialStat> stockFinStats = new List<FinancialStat>();
     List<FinancialStat> flowFinStats = new List<FinancialStat>();
-    IList<FinancialStat> originalFinStats = new List<FinancialStat>();
+    List<FinancialStat> originalFinStats = new List<FinancialStat>();
     private IList<FinanceType> financeTypes = new List<FinanceType>();
     private List<string> stockFinanceTypes = new List<string>();
     private List<string> flowFinanceTypes = new List<string>();
 
     //For tracking which goals are new vs original
-    private IList<int> originalfinStatsGuidList = new List<int>();
+    private IList<int?> originalfinStatsGuidList = new List<int?>();
 
     protected async override Task OnInitializedAsync()
     {
@@ -173,13 +187,15 @@ else
 
 
         //Check financial stats
-        isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId);
+
+        isExistsFinancialStats = await _finStatRepo.CheckUserHasRecords(Endpoints.FinancialStatsEndpoint, userId, financeDate);
 
 
-        //Grab the existing goals of the user if they exist
+        //Grab the existing finance stats of the user if they exist
         if (isExistsFinancialStats)
         {
-            originalFinStats = await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
+            originalFinStats = (List<FinancialStat>) await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
+            originalFinStats.RemoveAll(x => x.FinanceDate != financeDate);
 
             foreach (var finStat in originalFinStats)
             {
@@ -191,14 +207,22 @@ else
 
             stockFinStats = finStats.Where(x => stockFinanceTypes.Contains(x.FinanceDesc)).ToList();
             originalfinStatsGuidList = originalFinStats.Select(g => g.Id).ToList();
-
-            //filter available drop downs for finance types which have not already been taken up
-            var flowFinanceTypesInUse = flowFinStats.Select(x => x.FinanceDesc).ToList();
-            flowFinanceTypes.RemoveAll(x => flowFinanceTypesInUse.Contains(x));
-
-            var stockFinanceTypesInUse = stockFinStats.Select(x => x.FinanceDesc).ToList();
-            stockFinanceTypes.RemoveAll(x => stockFinanceTypesInUse.Contains(x));
         }
+        else
+        {
+            foreach(var finType in financeTypes)
+            {
+                var finStat = new FinancialStat(financeDate, userId);
+                finStat.FinanceDesc = finType.FinanceDesc;
+                finStats.Add(finStat);
+            }
+        }
+
+        flowFinStats = finStats.Where(x => flowFinanceTypes.Contains(x.FinanceDesc)).ToList();
+
+        stockFinStats = finStats.Where(x => stockFinanceTypes.Contains(x.FinanceDesc)).ToList();
+
+
         loadComplete = true;
 
     }
@@ -209,10 +233,9 @@ else
         radzenGrid.EditRow(finStat);
     }
 
-    private void SaveRow(RadzenGrid<FinancialStat> radzenGrid, FinancialStat finStat, List<string> dropDownList)
+    private void SaveRow(RadzenGrid<FinancialStat> radzenGrid, FinancialStat finStat)
     {
         radzenGrid.UpdateRow(finStat);
-        dropDownList.RemoveAll(x => x == finStat.FinanceDesc);
     }
 
     private void CancelEdit(RadzenGrid<FinancialStat> radzenGrid, IList<FinancialStat> radzenData, FinancialStat finStat)
@@ -248,6 +271,20 @@ else
         finStats = stockFinStats;
         finStats.AddRange(flowFinStats);
 
+        //validate all fields are populated
+        var missingFinanceTypes = checkMissingFinTypes(finStats, financeTypes);
+        if(missingFinanceTypes.Count > 0)
+        {
+            string toastErrorMessage = "Please provide details for:";
+            foreach(string missingFinanceType in missingFinanceTypes)
+            {
+                toastErrorMessage = toastErrorMessage + $"\r\n{missingFinanceType}";
+            }
+            _toastService.ShowWarning(toastErrorMessage);
+            return;
+        }
+
+
         foreach (FinancialStat finStat in finStats)
         {
             bool isSuccess;
@@ -263,7 +300,7 @@ else
             //if this was an original financial stat, then we need to do a put request. otherwise, post request
             if (originalfinStatsGuidList.Contains(finStatToSubmit.Id))
             {
-                isSuccess = await _finStatRepo.Update(Endpoints.FinancialStatsEndpoint, finStatToSubmit, finStatToSubmit.Id);
+                isSuccess = await _finStatRepo.Update(Endpoints.FinancialStatsEndpoint, finStatToSubmit, finStatToSubmit.Id ?? 0);
             }
             else
             {
@@ -277,12 +314,12 @@ else
             }
         }
         //for any financial stats in the original list that have been deleted, we need to submit a delete request
-        List<int> newFinStatGuidList = finStats.Select(g => g.Id).ToList();
+        List<int?> newFinStatGuidList = finStats.Select(g => g.Id).ToList();
         foreach (FinancialStat originalFinStat in originalFinStats)
         {
             if (!newFinStatGuidList.Contains(originalFinStat.Id))
             {
-                bool isDeleteSuccess = await _finStatRepo.Delete(Endpoints.FinancialStatsEndpoint, originalFinStat.Id);
+                bool isDeleteSuccess = await _finStatRepo.Delete(Endpoints.FinancialStatsEndpoint, originalFinStat.Id ?? 0);
                 if (!isDeleteSuccess)
                 {
                     isAllSuccess = false;
@@ -301,6 +338,15 @@ else
         }
 
         _navManager.NavigateTo(AppConstants.LinkFinanceTracking);
+    }
+
+
+    public List<string> checkMissingFinTypes(List<FinancialStat> userFinanceStats, IList<FinanceType> allFinTypes)
+    {
+        HashSet<string> userFinanceTypes = userFinanceStats.Select(x => x.FinanceDesc).ToHashSet();
+        HashSet<string> requiredTypes = allFinTypes.Select(x => x.FinanceDesc).ToHashSet();
+        requiredTypes.Except(userFinanceTypes);
+        return requiredTypes.Except(userFinanceTypes).ToList();
     }
 
 }

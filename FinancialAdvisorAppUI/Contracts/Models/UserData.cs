@@ -10,7 +10,7 @@ namespace FinancialAdvisorAppUI.Contracts.Models
     public class UserData : ApplicationData
     {
         
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         
     }
 }

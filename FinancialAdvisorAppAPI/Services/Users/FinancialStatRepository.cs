@@ -23,5 +23,14 @@ namespace FinancialAdvisorAppAPI.Services.Users
                 .Where(s => s.UserId == userId)
                 .ToListAsync();
         }
+
+        public async Task<IList<FinancialStat>> FindAllByUserId(int userId, DateTime effectiveDate)
+        {
+            return await _dbTable
+                .Include(s => s.FinanceType)
+                .Where(g => g.UserId == userId)
+                .Where(g => g.FinanceDate == effectiveDate)
+                .ToListAsync();
+        }
     }
 }

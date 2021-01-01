@@ -109,7 +109,7 @@ else
     IList<Goal> originalGoals = new List<Goal>();
 
     //For tracking which goals are new vs original
-    private IList<int> originalGoalsGuidList = new List<int>();
+    private IList<int?> originalGoalsGuidList = new List<int?>();
 
     protected async override Task OnInitializedAsync()
     {
@@ -212,7 +212,7 @@ else
             //if this was an original goal, then we need to do a put request. otherwise, post request
             if (originalGoalsGuidList.Contains(goal.Id))
             {
-                isSuccess = await _goalRepo.Update(Endpoints.GoalsEndpoint, goalToSubmit, goalToSubmit.Id);
+                isSuccess = await _goalRepo.Update(Endpoints.GoalsEndpoint, goalToSubmit, goalToSubmit.Id ?? 0);
             }
             else
             {
@@ -226,12 +226,12 @@ else
             }
         }
         //for any goals in the original list that have been deleted, we need to submit a delete request
-        List<int> newGoalsGuidList = goals.Select(g => g.Id).ToList();
+        List<int?> newGoalsGuidList = goals.Select(g => g.Id).ToList();
         foreach (Goal originalGoal in originalGoals)
         {
             if (!newGoalsGuidList.Contains(originalGoal.Id))
             {
-                bool isDeleteSuccess = await _goalRepo.Delete(Endpoints.GoalsEndpoint, originalGoal.Id);
+                bool isDeleteSuccess = await _goalRepo.Delete(Endpoints.GoalsEndpoint, originalGoal.Id ?? 0);
                 if (!isDeleteSuccess)
                 {
                     isAllSuccess = false;

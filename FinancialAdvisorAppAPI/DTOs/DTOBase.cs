@@ -8,7 +8,7 @@ namespace FinancialAdvisorAppAPI.DTOs
 {
     public abstract class DTOBase
     {
-        public int Id;
+        public int? Id;
         
     }
 }

@@ -28,6 +28,7 @@ namespace FinancialAdvisorAppUI.Models.Users
         {
             FinanceDate = financeDate;
             UserId = userId;
+            Id = null;
         }
 
         public FinancialStat()
@@ -57,6 +58,7 @@ namespace FinancialAdvisorAppUI.Models.Users
         [Required]
         public decimal FinanceValue { get; set; }
         public decimal InterestRate { get; set; }
+        public string UserFriendlyName { get; set; }
 
         public virtual FinanceType FinanceType { get; set; }
         public virtual UserDetail User { get; set; }

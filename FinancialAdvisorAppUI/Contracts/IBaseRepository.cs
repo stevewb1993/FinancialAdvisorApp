@@ -9,7 +9,9 @@ namespace FinancialAdvisorAppUI.Contracts
     {
         Task<T> GetById(string url, int id);
         Task<bool> CheckUserHasRecords(string url, int id);
+        Task<bool> CheckUserHasRecords(string url, int id, DateTime effectiveDate);
         Task<IList<T>> GetByUserId(string url, int id);
+        //Task<IList<T>> GetByUserId(string url, int id, DateTime effectiveDate);
         Task<IList<T>> Get(string url);
         Task<bool> Create(string url, T obj);
         Task<bool> Update(string url, T obj, int id);

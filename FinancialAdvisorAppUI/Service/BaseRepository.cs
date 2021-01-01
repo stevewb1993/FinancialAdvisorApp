@@ -73,6 +73,18 @@ namespace FinancialAdvisorAppUI.Service
             return false;
         }
 
+        public async Task<bool> CheckUserHasRecords(string url, int userId, DateTime effectiveDate)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", await GetBearerToken());
+
+            string requestString = url + userId + '/' + effectiveDate.ToString("yyyy-MM-dd");
+
+            var output = await _client.GetAsync(requestString);
+            if (output.IsSuccessStatusCode) return true;
+            return false;
+        }
+
         public async Task<IList<T>> Get(string url)
         {
             try
