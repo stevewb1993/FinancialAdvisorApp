@@ -5,7 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using FinancialAdvisorAppAPI.Contracts;
+using FinancialAdvisorAppAPI.Data.Users;
 using FinancialAdvisorAppAPI.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,15 +27,22 @@ namespace FinancialAdvisorAppAPI.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILoggerService _logger;
         private readonly IConfiguration _config;
+        private readonly IUserDetailRepository _userDetailRepository;
+        private readonly GenericControllerFunctions<UserDetail> _userDetailHelperFunctions;
+        private readonly IMapper _mapper;
+
         public UsersController(SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
             ILoggerService logger,
-            IConfiguration config)
+            IConfiguration config,
+            IUserDetailRepository userDetailRepository)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _config = config;
+            _userDetailRepository = userDetailRepository;
+            _userDetailHelperFunctions = new GenericControllerFunctions<UserDetail>(_logger, _mapper, _userDetailRepository);
         }
         /// <summary>
         /// USer Registration Endpoint
@@ -62,6 +71,11 @@ namespace FinancialAdvisorAppAPI.Controllers
                     return InternalError($"{location}: {username} User Registration Attempt Failed");
                 }
                 await _userManager.AddToRoleAsync(user, "Customer");
+
+                //create record for the user in the user details table
+                var userDetail = new UserDetail(user.Id);
+                await _userDetailRepository.Create(userDetail);
+
                 return Created("login",new { result.Succeeded });
             }
             catch (Exception e)
@@ -114,6 +128,12 @@ namespace FinancialAdvisorAppAPI.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
+
+            //get the users integer user id and add to their claims
+            var friendlyUserId = _userDetailRepository.FindByUserGuid(user.Id);
+            Claim friendlyIdClaim = new Claim("FriendlyUserId", friendlyUserId.Id.ToString());
+            claims.Add(friendlyIdClaim);
+
             var roles = await _userManager.GetRolesAsync(user);
             claims.AddRange(roles.Select(r => new Claim(ClaimsIdentity.DefaultRoleClaimType, r)));
 

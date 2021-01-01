@@ -48,7 +48,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetFinanceTypeById(string Id)
+        public async Task<IActionResult> GetFinanceTypeById(int Id)
         {
             return await _helperFunctions.GetRecordById<FinanceTypeDTO>(Id, ControllerContext);
         }
@@ -79,7 +79,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteFinanceTypeById(string Id)
+        public async Task<IActionResult> DeleteFinanceTypeById(int Id)
         {
             return await _helperFunctions.DeleteRecordById(Id, ControllerContext);
         }
@@ -94,7 +94,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateFinanceTypeById(string Id, [FromBody] FinanceTypeDTO financeTypeDTO)
+        public async Task<IActionResult> UpdateFinanceTypeById(int Id, [FromBody] FinanceTypeDTO financeTypeDTO)
         {
             return await _helperFunctions.UpdateRecordById(Id, financeTypeDTO, ControllerContext);
         }

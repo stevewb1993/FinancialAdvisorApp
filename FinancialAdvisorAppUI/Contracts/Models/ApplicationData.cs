@@ -8,6 +8,6 @@ namespace FinancialAdvisorAppUI.Contracts.Models
 {
     public class ApplicationData
     {
-        public string Id { get; set; }
+        public int? Id { get; set; }
     }
 }

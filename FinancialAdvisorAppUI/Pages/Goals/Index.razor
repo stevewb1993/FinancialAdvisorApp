@@ -77,7 +77,7 @@ else
     {
 
         var auth = await _authentication.GetAuthenticationStateAsync();
-        string userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        int userId = Int32.Parse(auth.User.FindFirst(AppConstants.UserId).Value);
         Console.WriteLine($"user id: {userId}");
 
         //Check user details

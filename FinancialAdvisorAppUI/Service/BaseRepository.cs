@@ -33,7 +33,7 @@ namespace FinancialAdvisorAppUI.Service
             return false;
         }
 
-        public async Task<bool> Delete(string url, string id)
+        public async Task<bool> Delete(string url, int id)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
@@ -45,7 +45,7 @@ namespace FinancialAdvisorAppUI.Service
             return false;
         }
 
-        public async Task<T> GetById(string url, string id)
+        public async Task<T> GetById(string url, int id)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
@@ -54,7 +54,7 @@ namespace FinancialAdvisorAppUI.Service
             return reponse;
         }
 
-        public async Task<IList<T>> GetByUserId(string url, string userId)
+        public async Task<IList<T>> GetByUserId(string url, int userId)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
@@ -63,12 +63,24 @@ namespace FinancialAdvisorAppUI.Service
             return reponse;
         }
 
-        public async Task<bool> CheckUserHasRecords(string url, string userId)
+        public async Task<bool> CheckUserHasRecords(string url, int userId)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", await GetBearerToken());
 
             var output = await _client.GetAsync(url + userId);
+            if (output.IsSuccessStatusCode) return true;
+            return false;
+        }
+
+        public async Task<bool> CheckUserHasRecords(string url, int userId, DateTime effectiveDate)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", await GetBearerToken());
+
+            string requestString = url + userId + '/' + effectiveDate.ToString("yyyy-MM-dd");
+
+            var output = await _client.GetAsync(requestString);
             if (output.IsSuccessStatusCode) return true;
             return false;
         }
@@ -90,7 +102,7 @@ namespace FinancialAdvisorAppUI.Service
             }
         }
 
-        public async Task<bool> Update(string url, T obj, string id)
+        public async Task<bool> Update(string url, T obj, int id)
         {
             if (obj == null)
                 return false;

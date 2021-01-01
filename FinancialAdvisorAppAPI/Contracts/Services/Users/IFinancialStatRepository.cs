@@ -9,6 +9,6 @@ namespace FinancialAdvisorAppAPI.Contracts
 {
     public interface IFinancialStatRepository : IUserRepositoryBase<FinancialStat>
     {
-
+        Task<IList<FinancialStat>> FindAllByUserId(int userId, DateTime effectiveDate);
     }
 }

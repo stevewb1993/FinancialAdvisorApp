@@ -23,7 +23,8 @@ namespace FinancialAdvisorAppUI.Static
 
     public static class AppConstants
     {
-        public const string UserId = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+        //public const string UserId = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+        public const string UserId = "FriendlyUserId";
         public const string LinkFinanceTracking = "/financetracking/";
         public const string LinkGoals = "/goals/";
         public const string LinkGoalsUpdate = "/goals/create/";

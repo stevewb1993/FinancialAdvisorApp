@@ -46,35 +46,56 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetFinancialStatByUserId(string userId)
+        public async Task<IActionResult> GetFinancialStatByUserId(int userId)
         {
             return await _helperFunctions.GetRecordsByUserId<FinancialStatDTO>(userId, ControllerContext);
         }
 
-        ///// <summary>
-        ///// Get financial stat by ID
-        ///// </summary>
-        ///// <param name="Id"></param>
-        ///// <returns>A single financial stat</returns>
-        //[HttpGet("{Id}")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetFinancialStatById(string Id)
-        //{
-        //    return await _helperFunctions.GetRecordById<FinancialStatDTO>(Id);
-        //}
+        /// <summary>
+        /// Get financial stat by UserID and date
+        /// </summary>
+        /// <returns>A users financial stats</returns>
+        [HttpGet("{userId}/{financeDate}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetFinancialStatByUserId(int userId, DateTime financeDate)
+        {
+            //int userId = financialStatDTO.UserId;
+            //DateTime financeDate = financialStatDTO.FinanceDate;
+
+            string location = _helperFunctions.GetControllerActionNames(ControllerContext);
+            try
+            {
+                _logger.LogInfo($"{location}: Attempted Call for id: {userId}");
+                var recordList = await _financialStatRepository.FindAllByUserId(userId, financeDate);
+                if (recordList == null || recordList.Count == 0)
+                {
+                    _logger.LogWarn($"{location}: Failed to retrieve record with id: {userId}");
+                    return NotFound();
+                }
+
+                var response = _mapper.Map<IList<FinancialStatDTO>>(recordList);
+                _logger.LogInfo($"{location}: Successfully got record with id: {userId}");
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return _helperFunctions.ReturnInternalError(e, ControllerContext);
+            }
+        }
+
 
         /// <summary>
         /// Delete a financial stat by ID
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpDelete("{Id}")]
+        [HttpDelete("{Id}/")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteFinancialStatById(string Id)
+        public async Task<IActionResult> DeleteFinancialStatById(int Id)
         {
             return await _helperFunctions.DeleteRecordById(Id, ControllerContext);
         }
@@ -89,7 +110,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateFinancialStatById(string Id, [FromBody] FinancialStatDTO financialStatDTO)
+        public async Task<IActionResult> UpdateFinancialStatById(int Id, [FromBody] FinancialStatDTO financialStatDTO)
         {
             return await _helperFunctions.UpdateRecordById(Id, financialStatDTO, ControllerContext);
         }
@@ -107,6 +128,32 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         {
             return await _helperFunctions.Create(financialStatDTO, ControllerContext);
         }
+
+        //public async Task<IActionResult> GetRecordsByUserIdAndDate(FinancialStatDTO financialStatDTO)
+        //{
+        //    int userId = financialStatDTO.UserId;
+        //    DateTime financeDate = financialStatDTO.FinanceDate;
+        //    
+        //    string location = _helperFunctions.GetControllerActionNames(ControllerContext);
+        //    try
+        //    {
+        //        _logger.LogInfo($"{location}: Attempted Call for id: {userId}");
+        //        var recordList = await _financialStatRepository.FindAllByUserId(userId, financeDate);
+        //        if (recordList == null || recordList.Count == 0)
+        //        {
+        //            _logger.LogWarn($"{location}: Failed to retrieve record with id: {userId}");
+        //            return NotFound();
+        //        }
+        //
+        //        var response = _mapper.Map<IList<FinancialStatDTO>>(recordList);
+        //        _logger.LogInfo($"{location}: Successfully got record with id: {userId}");
+        //        return Ok(response);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return _helperFunctions.ReturnInternalError(e, ControllerContext);
+        //    }
+        //}
 
 
     }
