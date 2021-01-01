@@ -30,10 +30,15 @@ namespace FinancialAdvisorAppAPI.Services.GoalGenerator
             List<Goal> goalList = new List<Goal>();
 
             List<FinancialStat> latestFinances = FinancialStatsCalculator.getLatestFinanceData(financialStats);
+            DateTime latestFinanceDate = latestFinances.Select(f => f.FinanceDate).Max();
 
             //test short term savings goal
             Goal shortTermSavingsGoal = TestShortTermSaving(latestFinances);
             if (shortTermSavingsGoal != null) goalList.Add(shortTermSavingsGoal);
+
+            //debt reduction goals
+            List<Goal> debtReductionGoalList = TestDebtReduction(latestFinances, latestFinanceDate);
+            goalList.AddRange(debtReductionGoalList);
 
             return goalList;
 
@@ -64,6 +69,44 @@ namespace FinancialAdvisorAppAPI.Services.GoalGenerator
             Goal liquidSavingsGoal = new Goal(dueDate,3, requiredSavings, DateTime.Now, userDetail.Id, goalFinanceType, justification);
 
             return liquidSavingsGoal;
+        }
+
+        public List<Goal> TestDebtReduction(List<FinancialStat> latestFinances, DateTime startDate)
+        {
+            List<Goal> debtReductionGoalList = new List<Goal>();
+
+            decimal monthlyLiabilityInterestPayments = FinancialStatsCalculator.CalculateCapitalExpense(latestFinances);
+            decimal totalDebt = latestFinances.Where(f => f.FinanceType.Category == "Liability").Select(f => f.FinanceValue).Sum();
+
+            //if user is not paying off any debts, return
+            if (monthlyLiabilityInterestPayments <= 0) return null;
+
+            decimal monthlyDisposableIncome = FinancialStatsCalculator.calculateDisposableIncome(latestFinances);
+            //if user has negative disposable income, return. don't know how to treat this
+            if (monthlyDisposableIncome <= 0) return null;
+
+            //begin debt reduction goal schedule
+            decimal remainingDebt = totalDebt;
+            DateTime goalStartDate = startDate;
+            FinanceType debtFinanceType = financeTypeList.Where(f => f.Id == 10).FirstOrDefault();
+
+            while (remainingDebt > 0)
+            {
+                decimal targetDebtReduction = Math.Min(monthlyDisposableIncome, remainingDebt) / 2;
+
+                string justification = $"Reducing your debts so you are not paying monthly interest";
+
+                remainingDebt -= targetDebtReduction;
+
+                Goal monthlyGoal = new Goal(goalStartDate.AddMonths(1), 10, remainingDebt, goalStartDate, userDetail.Id, debtFinanceType, justification);
+                debtReductionGoalList.Add(monthlyGoal);
+
+                remainingDebt -= targetDebtReduction;
+
+                goalStartDate = goalStartDate.AddMonths(1);
+            }
+
+            return debtReductionGoalList;
         }
 
 

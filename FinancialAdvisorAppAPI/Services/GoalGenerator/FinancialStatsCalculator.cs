@@ -69,9 +69,11 @@ namespace FinancialAdvisorAppAPI.Services.GoalGenerator
         {
             return userFinances
                 .Where(x => x.FinanceType.Category == "Liability")
-                .Select(x => x.FinanceValue * x.InterestRate)
+                .Select(x => x.FinanceValue * (x.InterestRate * 0.01m))
                 .Sum();
         }
+
+
 
     }
 }

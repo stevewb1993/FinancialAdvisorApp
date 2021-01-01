@@ -13,7 +13,8 @@ USING (VALUES
 	,(9,'Rent Monthly Cost', 'Flow', 'Outgoings', null)
 	,(10,'Debt', 'Stock', 'Liability', null)
 	,(11,'Monthly Salary Income Post-Tax', 'Flow', 'Incomings', null)
-	,(12,'Other Necessary Monthly Expenses', 'Flow', 'Outgoings', null))
+	,(12,'Other Necessary Monthly Expenses', 'Flow', 'Outgoings', null)
+	,(13,'Personal Monthly Pension Contributions', 'Flow', 'Outgoings', null))
 AS SOURCE ([FinanceTypeId], [FinanceDesc], [StockOrFlow], [Category], [Liquidity])
 ON TARGET.Id = Source.[FinanceTypeId] and TARGET.FinanceDesc = Source.FinanceDesc and TARGET.StockOrFlow = Source.StockOrFlow AND TARGET.[Category] = SOURCE.[Category] AND (TARGET.[Liquidity] = SOURCE.[Liquidity] or source.[Liquidity] is null)
 WHEN NOT MATCHED BY SOURCE THEN DELETE

@@ -166,10 +166,10 @@ else
             foreach (var goal in newGoals)
             {
                 goal.FinanceDesc = goal.FinanceType.FinanceDesc;
-                goals.AddRange(newGoals);
-                await goalsGrid.Reload();
-                _toastService.ShowSuccess("New goals successfully generated");
+                goals.Add(goal);
             }
+            await goalsGrid.Reload();
+            _toastService.ShowSuccess("New goals successfully generated");
         }
         else
         {
