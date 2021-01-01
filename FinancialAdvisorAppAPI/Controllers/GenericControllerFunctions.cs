@@ -31,7 +31,7 @@ namespace FinancialAdvisorAppAPI.Controllers
         
         
         //Gets
-        public async Task<IActionResult> GetRecordById<dto>(string Id, ControllerContext controllerContext) where dto : DTOBase
+        public async Task<IActionResult> GetRecordById<dto>(int Id, ControllerContext controllerContext) where dto : DTOBase
         {
 
             string location = GetControllerActionNames(controllerContext);
@@ -114,7 +114,7 @@ namespace FinancialAdvisorAppAPI.Controllers
 
         //Puts / Updates
 
-        public async Task<IActionResult> UpdateRecordById(string Id, DTOBase dto, ControllerContext controllerContext)
+        public async Task<IActionResult> UpdateRecordById(int Id, DTOBase dto, ControllerContext controllerContext)
         {
             string location = GetControllerActionNames(controllerContext);
             try
@@ -149,7 +149,7 @@ namespace FinancialAdvisorAppAPI.Controllers
 
 
         //Deletes
-        public async Task<IActionResult> DeleteRecordById(string id, ControllerContext controllerContext)
+        public async Task<IActionResult> DeleteRecordById(int id, ControllerContext controllerContext)
         {
             string location = GetControllerActionNames(controllerContext);
             try

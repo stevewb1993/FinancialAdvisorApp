@@ -11,7 +11,7 @@ namespace FinancialAdvisorAppAPI.Data.Users
     public partial class FinancialStat : UserData
     {
         public DateTime FinanceDate { get; set; }
-        public string FinanceTypeId { get; set; }
+        public int FinanceTypeId { get; set; }
         public decimal FinanceValue { get; set; }
         public decimal InterestRate { get; set; }
 

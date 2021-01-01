@@ -10,7 +10,7 @@ namespace FinancialAdvisorAppUI.Models.Users
 {
     public class FinancialStat : UserData
     {
-        public FinancialStat(DateTime financeDate, string financeTypeId, FinanceType financeType)
+        public FinancialStat(DateTime financeDate, int financeTypeId, FinanceType financeType)
         {
             FinanceDate = financeDate;
             FinanceTypeId = financeTypeId;
@@ -24,42 +24,35 @@ namespace FinancialAdvisorAppUI.Models.Users
         /// <param name="userId"></param>
         /// <param name="financeType"></param>
         /// <param name="financeTypeId"></param>
-        public FinancialStat(DateTime financeDate, string userId, FinanceType financeType = null, string financeTypeId = null)
+        public FinancialStat(DateTime financeDate, int userId)
         {
             FinanceDate = financeDate;
             UserId = userId;
-            Id = Guid.NewGuid().ToString();
-            FinanceTypeId = financeTypeId;
-            FinanceType = financeType;
-
-
         }
 
         public FinancialStat()
         {
         }
 
-        public FinancialStat(DateTime financeDate, string financeTypeId, decimal financeValue, string userId, string id)
+        public FinancialStat(DateTime financeDate, int financeTypeId, decimal financeValue, int userId)
         {
             FinanceDate = financeDate;
             FinanceTypeId = financeTypeId;
             FinanceValue = financeValue;
             UserId = userId;
-            Id = id;
         }
 
-        public FinancialStat(DateTime financeDate, string financeTypeId, decimal financeValue, decimal interestRate, string userId, string id)
+        public FinancialStat(DateTime financeDate, int financeTypeId, decimal financeValue, decimal interestRate, int userId)
         {
             FinanceDate = financeDate;
             FinanceTypeId = financeTypeId;
             FinanceValue = financeValue;
             UserId = userId;
-            Id = id;
             InterestRate = interestRate;
         }
 
         public DateTime FinanceDate { get; set; }
-        public string FinanceTypeId { get; set; }
+        public int? FinanceTypeId { get; set; }
         public string FinanceDesc { get; set; }
         [Required]
         public decimal FinanceValue { get; set; }

@@ -137,7 +137,7 @@ else
     private DateTime financeDate;
 
     private bool loadComplete = false;
-    private string userId;
+    private int userId;
     private bool isExistsFinancialStats;
     private bool isExistsUserDetails;
 
@@ -153,12 +153,12 @@ else
     private List<string> flowFinanceTypes = new List<string>();
 
     //For tracking which goals are new vs original
-    private IList<string> originalfinStatsGuidList = new List<string>();
+    private IList<int> originalfinStatsGuidList = new List<int>();
 
     protected async override Task OnInitializedAsync()
     {
         var auth = await _authentication.GetAuthenticationStateAsync();
-        userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        userId = Int32.Parse(auth.User.FindFirst(AppConstants.UserId).Value);
 
         financeDate = DateTime.ParseExact(dateId, "yyyyMMdd", CultureInfo.InvariantCulture);
 
@@ -277,7 +277,7 @@ else
             }
         }
         //for any financial stats in the original list that have been deleted, we need to submit a delete request
-        List<string> newFinStatGuidList = finStats.Select(g => g.Id).ToList();
+        List<int> newFinStatGuidList = finStats.Select(g => g.Id).ToList();
         foreach (FinancialStat originalFinStat in originalFinStats)
         {
             if (!newFinStatGuidList.Contains(originalFinStat.Id))

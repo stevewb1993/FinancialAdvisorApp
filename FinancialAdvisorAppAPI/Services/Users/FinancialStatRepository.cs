@@ -16,7 +16,7 @@ namespace FinancialAdvisorAppAPI.Services.Users
 
         }
 
-        public override async Task<IList<FinancialStat>> FindAllByUserId(string userId)
+        public override async Task<IList<FinancialStat>> FindAllByUserId(int userId)
         {
             return await _dbTable
                 .Include(s => s.FinanceType)

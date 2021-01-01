@@ -15,6 +15,11 @@ namespace FinancialAdvisorAppAPI.Services.Users
         {
 
         }
+
+        public UserDetail FindByUserGuid(string userGuid)
+        {
+            return _dbTable.Where(x => x.UserGuid == userGuid).ToList().FirstOrDefault();
+        }
     }
 
 }

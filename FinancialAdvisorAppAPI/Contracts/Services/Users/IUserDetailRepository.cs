@@ -9,6 +9,7 @@ namespace FinancialAdvisorAppAPI.Contracts
 {
     public interface IUserDetailRepository : IRepositoryBase<UserDetail>
     {
+        UserDetail FindByUserGuid(string userGuid);
 
     }
 }

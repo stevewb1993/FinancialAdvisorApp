@@ -21,7 +21,7 @@ namespace FinancialAdvisorAppAPI.Services.Users
 
         }
 
-        public override async Task<IList<Goal>> FindAllByUserId(string userId)
+        public override async Task<IList<Goal>> FindAllByUserId(int userId)
         {
             return await _db.Goals
                 .Where(g => g.UserId == userId)

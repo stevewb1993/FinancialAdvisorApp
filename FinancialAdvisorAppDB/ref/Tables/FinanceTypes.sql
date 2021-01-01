@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [ref].[FinanceTypes]
 (
-	Id NVARCHAR (450) PRIMARY KEY,
+	Id INT IDENTITY (1,1) PRIMARY KEY,
 	[FinanceDesc] NVARCHAR (200) NOT NULL,
 	[StockOrFlow] NVARCHAR(5) NOT NULL
 )

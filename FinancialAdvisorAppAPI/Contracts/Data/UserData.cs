@@ -9,7 +9,7 @@ namespace FinancialAdvisorAppAPI.Contracts.Data
     public class UserData : ApplicationData
     {
         
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         
     }
 }

@@ -37,12 +37,12 @@ namespace FinancialAdvisorAppAPI.Services
             return await _dbTable.ToListAsync();
         }
 
-        public async Task<T> FindById(string id)
+        public async Task<T> FindById(int id)
         {
             return await _dbTable.FirstOrDefaultAsync(q => q.Id == id);
         }
 
-        public async Task<bool> isExists(string id)
+        public async Task<bool> isExists(int id)
         {
             return await _dbTable.AnyAsync(q => q.Id == id);
         }

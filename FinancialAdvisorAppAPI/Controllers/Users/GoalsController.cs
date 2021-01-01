@@ -46,7 +46,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetGoalsByUserId(string userId)
+        public async Task<IActionResult> GetGoalsByUserId(int userId)
         {
             return await _helperFunctions.GetRecordsByUserId<GoalDTO>(userId, ControllerContext);
         }
@@ -74,7 +74,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteGoalById(string Id)
+        public async Task<IActionResult> DeleteGoalById(int Id)
         {
             return await _helperFunctions.DeleteRecordById(Id, ControllerContext);
         }
@@ -89,7 +89,7 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateGoalById(string Id, [FromBody] GoalDTO goalDTO)
+        public async Task<IActionResult> UpdateGoalById(int Id, [FromBody] GoalDTO goalDTO)
         {
             return await _helperFunctions.UpdateRecordById(Id, goalDTO, ControllerContext);
         }

@@ -97,7 +97,7 @@ else
 @code {
 
     private bool loadComplete = false;
-    private string userId;
+    private int userId;
     private bool isExistsFinancialStats;
     private bool isExistsGoals;
     private bool isExistsUserDetails;
@@ -109,12 +109,12 @@ else
     IList<Goal> originalGoals = new List<Goal>();
 
     //For tracking which goals are new vs original
-    private IList<string> originalGoalsGuidList = new List<string>();
+    private IList<int> originalGoalsGuidList = new List<int>();
 
     protected async override Task OnInitializedAsync()
     {
         var auth = await _authentication.GetAuthenticationStateAsync();
-        userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        userId = Int32.Parse(auth.User.FindFirst(AppConstants.UserId).Value);
 
         //load financial types for drop down editting
         financeTypes = await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
@@ -226,7 +226,7 @@ else
             }
         }
         //for any goals in the original list that have been deleted, we need to submit a delete request
-        List<string> newGoalsGuidList = goals.Select(g => g.Id).ToList();
+        List<int> newGoalsGuidList = goals.Select(g => g.Id).ToList();
         foreach (Goal originalGoal in originalGoals)
         {
             if (!newGoalsGuidList.Contains(originalGoal.Id))

@@ -56,7 +56,7 @@
     private bool isExistsUserDetails;
     private bool isExistsGoals;
 
-    private string userId;
+    private int userId;
 
 
 
@@ -64,7 +64,7 @@
     {
 
         var auth = await _authentication.GetAuthenticationStateAsync();
-        userId = auth.User.FindFirst(AppConstants.UserId).Value;
+        userId = Int32.Parse(auth.User.FindFirst(AppConstants.UserId).Value);
 
         //Check user details
         isExistsUserDetails = await _userDetailRepo.CheckUserHasRecords(Endpoints.UserDetailsEndpoint, userId);

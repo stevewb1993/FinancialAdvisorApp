@@ -23,7 +23,7 @@ namespace FinancialAdvisorAppAPI.Controllers
             _userRepositoryBase = repositoryBase;
         }
 
-        public async Task<IActionResult> GetRecordsByUserId<dto>(string userId, ControllerContext controllerContext) where dto : DTOBase
+        public async Task<IActionResult> GetRecordsByUserId<dto>(int userId, ControllerContext controllerContext) where dto : DTOBase
         {
             string location = GetControllerActionNames(controllerContext);
             try

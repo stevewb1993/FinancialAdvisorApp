@@ -7,9 +7,9 @@ namespace FinancialAdvisorAppAPI.DTOs.Users
 {
     public class GoalDTO : DTOBase
     {
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public DateTime DueDate { get; set; }
-        public string FinanceTypeId { get; set; }
+        public int FinanceTypeId { get; set; }
         public decimal GoalValue { get; set; }
         public DateTime GoalStartDate { get; set; }
 

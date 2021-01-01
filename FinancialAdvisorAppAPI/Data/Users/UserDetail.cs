@@ -14,6 +14,17 @@ namespace FinancialAdvisorAppAPI.Data.Users
         public DateTime DateOfBirth { get; set; }
         public string HighestEducation { get; set; }
         public int RetirementAge { get; set; }
+        public string UserGuid { get; set; }
+
+        public UserDetail(string userGuid)
+        {
+            UserGuid = userGuid;
+        }
+
+        public UserDetail()
+        {
+
+        }
 
     }
 }
