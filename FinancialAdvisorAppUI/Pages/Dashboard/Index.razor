@@ -1,9 +1,12 @@
 ﻿@page "/dashboard/"
 
+@using System.Globalization
+
 @inject NavigationManager _navManager
 @inject IGoalRepository _goalRepo
 @inject IFinancialStatRepository _finStatRepo
 @inject IUserDetailRepository _userDetailRepo
+@inject IFinanceTypeRepository _finTypeRepo
 @inject HttpClient _client
 @inject ApiAuthenticationStateProvider _authentication
 
@@ -60,13 +63,33 @@ else
 
     @if (isExistsFinancialStats)
     {
-        <p>Placeholder for dashboard</p>
+        
+        foreach (var account in financialStatsBrokenDown)
+        {
+            <div class="row">
+                <div class="col-md-6 col-sm-12 p-4">
+                    <label>Smooth <RadzenCheckBox @bind-Value="@smooth" Name="smooth"></RadzenCheckBox></label>
+                    <RadzenChart>
+                        <RadzenLineSeries Smooth="@smooth" Data="@account.Value" CategoryProperty="FinanceDate" Title="2019" LineType="LineType.Dashed" ValueProperty="FinanceValue">
+                            <RadzenMarkers MarkerType="MarkerType.Square" />
+                        </RadzenLineSeries>
+                        <RadzenCategoryAxis Padding="20" FormatString="{0:MMM}" />
+                        <RadzenValueAxis Formatter="@FormatAsGBP">
+                            <RadzenGridLines Visible="true" />
+                            <RadzenAxisTitle Text="Value" />
+                        </RadzenValueAxis>
+                    </RadzenChart>
+                </div>
+            </div>
+        }
+
     }
 }
 
 
 
 @code {
+
 
 
     private bool isExistsUserDetails;
@@ -76,6 +99,12 @@ else
     private string linkUpdateFinStats = "/financialstats/create/";
     private bool loadComplete = false;
 
+    //details for charts
+    bool smooth = false;
+
+    List<FinancialStat> fullFinancialStats = new List<FinancialStat>();
+    List<FinancialStat> currentAccountStats = new List<FinancialStat>();
+    Dictionary<FinanceType, List<FinancialStat>> financialStatsBrokenDown = new Dictionary<FinanceType, List<FinancialStat>>();
 
 
     protected async override Task OnInitializedAsync()
@@ -98,6 +127,26 @@ else
         Console.WriteLine(isExistsFinancialStats);
         loadComplete = true;
 
+        List<FinanceType> financeTypes = new List<FinanceType>();
 
+
+
+
+        if (isExistsFinancialStats)
+        {
+            fullFinancialStats = (List<FinancialStat>)await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
+            //split out finnace stats into the different classes
+            //currentAccountStats = fullFinancialStats.Where(f => f.FinanceTypeId == 1).ToList();
+            financeTypes = (List<FinanceType>)await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
+            financialStatsBrokenDown = financialstatshelper.SplitOutFinancialStatsByCategory(financeTypes, fullFinancialStats);
+        }
+
+
+    }
+
+
+    string FormatAsGBP(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-GB"));
     }
 }
