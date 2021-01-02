@@ -10,7 +10,7 @@ namespace FinancialAdvisorAppUI.Static
 #if DEBUG
         public static string BaseUrl = "https://localhost:44340/";
 #else
-
+        public static string BaseUrl = "https://financialadvisorappapi20210102143212.azurewebsites.net/https://financialadvisorappapi20210102143212.azurewebsites.net";
 
 #endif
         public static string GoalsEndpoint = $"{BaseUrl}api/goals/";

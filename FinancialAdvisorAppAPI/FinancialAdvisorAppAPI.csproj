@@ -1,12 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>72855f46-1403-4e58-9dd5-deef785a1c18</UserSecretsId>
+    <RootNamespace>FinancialAdvisorAppAPI</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\$(Configuration)\FinancialAdvisorAppAPI.xml</DocumentationFile>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
