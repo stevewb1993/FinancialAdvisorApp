@@ -69,7 +69,7 @@ else
                     <div class="col-12">
                         <label>Smooth <RadzenCheckBox @bind-Value="@financeTrackerSmooth" Name="smooth"></RadzenCheckBox></label>
                         <RadzenChart>
-                            @foreach (var account in financialStatsBrokenDown)
+                            @foreach (var account in financialStatsBrokenDownFiltered)
                             {
                                 string shortTitle = account.Key.FinanceDesc.Substring(0, Math.Min(20, account.Key.FinanceDesc.Length));
                                 <RadzenLineSeries Smooth="@financeTrackerSmooth" Data="@account.Value" CategoryProperty="FinanceDate" Title="@shortTitle" LineType="LineType.Dashed" ValueProperty="FinanceValue">
@@ -143,6 +143,7 @@ else
     //details for financial tracker chart
     bool financeTrackerSmooth = false;
     Dictionary<FinanceType, List<FinancialStat>> financialStatsBrokenDown = new Dictionary<FinanceType, List<FinancialStat>>();
+    Dictionary<FinanceType, List<FinancialStat>> financialStatsBrokenDownFiltered = new Dictionary<FinanceType, List<FinancialStat>>();
 
     //details for goal tracker chart
     bool goalTrackerSmooth = false;
@@ -184,7 +185,7 @@ else
             financialStatsBrokenDown = FinancialStatsHelper.SplitOutFinancialStatsByCategory(financeTypes, aggregatedFinancialStats);
 
             //remove categories where the user has never recorded any data
-            financialStatsBrokenDown = FinancialStatsHelper.RemoveEmptyCategories(financialStatsBrokenDown);
+            financialStatsBrokenDownFiltered = FinancialStatsHelper.RemoveEmptyCategories(financialStatsBrokenDown);
 
             selectedFinanceTypeDescription = financeTypes.FirstOrDefault().FinanceDesc;
             financeTypeSelected = financeTypes.FirstOrDefault();
