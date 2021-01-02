@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Users\Steve\source\repos\FinancialAdvisorApp\FinancialAdvisorAppAPI\FinancialAdvisorAppAPI.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\FinancialAdvisorAppAPI.xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
