@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinancialAdvisorAppUI.FinanceCalculations
 {
-    public static class financialstatshelper
+    public static class FinancialStatsHelper
     {
         public static Dictionary<FinanceType, List<FinancialStat>> SplitOutFinancialStatsByCategory(List<FinanceType> financeTypes, List<FinancialStat> finStats)
         {
@@ -18,5 +18,11 @@ namespace FinancialAdvisorAppUI.FinanceCalculations
             }
             return brokenDownFinanceStats;
         }
+
+        public static List<FinancialStat> AggregateDailyFinancialStats(List<FinancialStat> finstats)
+        {
+            return null;
+        }
+
     }
 }

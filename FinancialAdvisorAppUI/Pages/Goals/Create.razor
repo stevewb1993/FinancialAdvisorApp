@@ -46,7 +46,7 @@ else
                 </EditTemplate>
             </RadzenGridColumn>
 
-            <RadzenGridColumn Width="100px" TItem="Goal" Property="GoalValue" Title="Goal Value">
+            <RadzenGridColumn Width="100px" TItem="Goal" Property="GoalValue" Title="Goal Value" TextAlign="TextAlign.Right">
                 <EditTemplate Context="goal">
                     <RadzenNumeric @bind-Value="goal.GoalValue" Data="@goals" TextProperty="GoalValue" ValueProperty="GoalValue" Style="width:100%" />
                 </EditTemplate>

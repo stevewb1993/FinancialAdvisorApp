@@ -45,13 +45,13 @@ else
                 </EditTemplate>
             </RadzenGridColumn>
 
-            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceValue" Title="Value">
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceValue" Title="Value" TextAlign="TextAlign.Right">
                 <EditTemplate Context="financialStat">
                     <RadzenNumeric @bind-Value="financialStat.FinanceValue" TextProperty="FinanceValue" ValueProperty="FinanceValue" Style="width:100%" />
                 </EditTemplate>
             </RadzenGridColumn>
 
-            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="InterestRate" Title="Interest Rate">
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="InterestRate" Title="Interest Rate" TextAlign="TextAlign.Right">
                 <EditTemplate Context="financialStat">
                     <RadzenNumeric @bind-Value="financialStat.InterestRate" TextProperty="InterestRate" ValueProperty="InterestRate" Style="width:100%" />
                 </EditTemplate>
@@ -108,7 +108,7 @@ else
                 </EditTemplate>
             </RadzenGridColumn>
 
-            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceValue" Title="Value">
+            <RadzenGridColumn Width="200px" TItem="FinancialStat" Property="FinanceValue" Title="Value" TextAlign="TextAlign.Right">
                 <EditTemplate Context="financialStat">
                     <RadzenNumeric @bind-Value="financialStat.FinanceValue" TextProperty="FinanceValue" ValueProperty="FinanceValue" Style="width:100%" />
                 </EditTemplate>
