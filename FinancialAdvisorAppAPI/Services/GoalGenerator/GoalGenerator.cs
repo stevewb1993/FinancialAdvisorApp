@@ -38,7 +38,7 @@ namespace FinancialAdvisorAppAPI.Services.GoalGenerator
 
             //debt reduction goals
             List<Goal> debtReductionGoalList = TestDebtReduction(latestFinances, latestFinanceDate);
-            goalList.AddRange(debtReductionGoalList);
+            if (debtReductionGoalList != null) goalList.AddRange(debtReductionGoalList);
 
             return goalList;
 

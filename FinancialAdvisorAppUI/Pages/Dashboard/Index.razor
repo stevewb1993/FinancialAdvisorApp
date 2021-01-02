@@ -27,7 +27,7 @@ else
         </div>
 
 
-        <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(linkUserDetails))">
+        <button class="btn btn-outline-secondary" @onclick="@(e => _navManager.NavigateTo(AppConstants.LinkUserDetails))">
             <span class="oi oi-fork"></span>
             Update user details
         </button>
@@ -59,31 +59,71 @@ else
     }
 
 
-
-
     @if (isExistsFinancialStats)
     {
-        
-        foreach (var account in financialStatsBrokenDown)
-        {
-            <div class="row">
-                <div class="col-md-6 col-sm-12 p-4">
-                    <label>Smooth <RadzenCheckBox @bind-Value="@smooth" Name="smooth"></RadzenCheckBox></label>
-                    <RadzenChart>
-                        <RadzenLineSeries Smooth="@smooth" Data="@account.Value" CategoryProperty="FinanceDate" Title="2019" LineType="LineType.Dashed" ValueProperty="FinanceValue">
-                            <RadzenMarkers MarkerType="MarkerType.Square" />
-                        </RadzenLineSeries>
-                        <RadzenCategoryAxis Padding="20" FormatString="{0:MMM}" />
-                        <RadzenValueAxis Formatter="@FormatAsGBP">
-                            <RadzenGridLines Visible="true" />
-                            <RadzenAxisTitle Text="Value" />
-                        </RadzenValueAxis>
-                    </RadzenChart>
+        <div style="margin-top:50px">
+
+            <RadzenCard Style="width:90%">
+                <h5>Financial Tracker</h5>
+                <div class="row">
+                    <div class="col-12">
+                        <label>Smooth <RadzenCheckBox @bind-Value="@financeTrackerSmooth" Name="smooth"></RadzenCheckBox></label>
+                        <RadzenChart>
+                            @foreach (var account in financialStatsBrokenDown)
+                            {
+                                string shortTitle = account.Key.FinanceDesc.Substring(0, Math.Min(20, account.Key.FinanceDesc.Length));
+                                <RadzenLineSeries Smooth="@financeTrackerSmooth" Data="@account.Value" CategoryProperty="FinanceDate" Title="@shortTitle" LineType="LineType.Dashed" ValueProperty="FinanceValue">
+                                    <RadzenMarkers MarkerType="MarkerType.Square" />
+                                </RadzenLineSeries>
+                                <RadzenCategoryAxis Padding="20" FormatString="{0:MMM yyyy}" />
+                                <RadzenValueAxis Formatter="@FormatAsGBP">
+                                    <RadzenGridLines Visible="true" />
+                                    <RadzenAxisTitle Text="Value" />
+                                </RadzenValueAxis>
+                            }
+                        </RadzenChart>
+                    </div>
                 </div>
-            </div>
-        }
+            </RadzenCard>
+        </div>
 
     }
+
+    @if (isExistsFinancialStats & isExistsGoals)
+        {
+            <div style="margin-top:50px">
+
+                <RadzenCard Style="width:90%">
+                    <h5>Goals Tracker</h5>
+                    <RadzenDropDown AllowClear="true" TValue="string" @bind-Value=@selectedFinanceTypeDescription
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.StartsWith" AllowFiltering="true"
+                                    Data=@financeTypes TextProperty="FinanceDesc" ValueProperty="FinanceDesc" Change=@(e => UpdateGoalChart()) />
+                    <div class="row">
+                        <div class="col-12">
+                            <label>Smooth <RadzenCheckBox @bind-Value="@goalTrackerSmooth" Name="smooth"></RadzenCheckBox></label>
+                            <RadzenChart>
+
+                                <RadzenLineSeries Smooth="@goalTrackerSmooth" Data="@financialStatsForGoalTracker" CategoryProperty="FinanceDate" Title="Actuals" LineType="LineType.Dashed" ValueProperty="FinanceValue">
+                                    <RadzenMarkers MarkerType="MarkerType.Square" />
+                                </RadzenLineSeries>
+
+                                <RadzenLineSeries Smooth="@financeTrackerSmooth" Data="@selectedGoals" CategoryProperty="DueDate" Title="Goals" LineType="LineType.Dashed" ValueProperty="GoalValue">
+                                    <RadzenMarkers MarkerType="MarkerType.Square" />
+                                </RadzenLineSeries>
+
+                                <RadzenCategoryAxis Padding="20" FormatString="{0:MMM yyyy}" />
+                                <RadzenValueAxis Formatter="@FormatAsGBP">
+                                    <RadzenGridLines Visible="true" />
+                                    <RadzenAxisTitle Text="Value" />
+                                </RadzenValueAxis>
+
+                            </RadzenChart>
+                        </div>
+                    </div>
+                </RadzenCard>
+            </div>
+
+        }
 }
 
 
@@ -95,16 +135,22 @@ else
     private bool isExistsUserDetails;
     private bool isExistsGoals;
     private bool isExistsFinancialStats;
-    private string linkUserDetails = "/userdetails/";
-    private string linkUpdateFinStats = "/financialstats/create/";
     private bool loadComplete = false;
 
-    //details for charts
-    bool smooth = false;
-
+    List<FinanceType> financeTypes = new List<FinanceType>();
     List<FinancialStat> fullFinancialStats = new List<FinancialStat>();
-    List<FinancialStat> currentAccountStats = new List<FinancialStat>();
+
+    //details for financial tracker chart
+    bool financeTrackerSmooth = false;
     Dictionary<FinanceType, List<FinancialStat>> financialStatsBrokenDown = new Dictionary<FinanceType, List<FinancialStat>>();
+
+    //details for goal tracker chart
+    bool goalTrackerSmooth = false;
+    string selectedFinanceTypeDescription;
+    FinanceType financeTypeSelected;
+    List<FinancialStat> financialStatsForGoalTracker = new List<FinancialStat>();
+    List<Goal> allGoals = new List<Goal>();
+    List<Goal> selectedGoals = new List<Goal>();
 
 
     protected async override Task OnInitializedAsync()
@@ -112,11 +158,9 @@ else
 
         var auth = await _authentication.GetAuthenticationStateAsync();
         int userId = Int32.Parse(auth.User.FindFirst(AppConstants.UserId).Value);
-        Console.WriteLine($"user id: {userId}");
 
         //Check user details
         isExistsUserDetails = await _userDetailRepo.CheckUserHasCompletedDetailsForm(userId);
-        Console.WriteLine(isExistsUserDetails);
 
         //Check goals
         isExistsGoals = await _goalRepo.CheckUserHasRecords(Endpoints.GoalsEndpoint, userId);
@@ -127,11 +171,6 @@ else
         Console.WriteLine(isExistsFinancialStats);
         loadComplete = true;
 
-        List<FinanceType> financeTypes = new List<FinanceType>();
-
-
-
-
         if (isExistsFinancialStats)
         {
             fullFinancialStats = (List<FinancialStat>)await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
@@ -139,9 +178,18 @@ else
             //currentAccountStats = fullFinancialStats.Where(f => f.FinanceTypeId == 1).ToList();
             financeTypes = (List<FinanceType>)await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
             financialStatsBrokenDown = financialstatshelper.SplitOutFinancialStatsByCategory(financeTypes, fullFinancialStats);
+            selectedFinanceTypeDescription = financeTypes.FirstOrDefault().FinanceDesc;
+            financeTypeSelected = financeTypes.FirstOrDefault();
+            financialStatsForGoalTracker = financialStatsBrokenDown[financeTypeSelected];
         }
 
+        if (isExistsGoals)
+        {
+            allGoals = (List<Goal>)await _goalRepo.GetByUserId(Endpoints.GoalsEndpoint, userId);
+            selectedGoals = allGoals.Where(g => g.FinanceType.FinanceDesc == selectedFinanceTypeDescription).ToList();
+        }
 
+        loadComplete = true;
     }
 
 
@@ -149,4 +197,12 @@ else
     {
         return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-GB"));
     }
+
+    public void UpdateGoalChart()
+    {
+        financeTypeSelected = financeTypes.Where(f => f.FinanceDesc == selectedFinanceTypeDescription).FirstOrDefault();
+        financialStatsForGoalTracker = financialStatsBrokenDown[financeTypeSelected];
+        selectedGoals = allGoals.Where(g => g.FinanceType.FinanceDesc == selectedFinanceTypeDescription).ToList();
+    }
+
 }
