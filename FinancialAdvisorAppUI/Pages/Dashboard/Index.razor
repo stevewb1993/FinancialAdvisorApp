@@ -184,8 +184,11 @@ else
             //group the different categories of financial stats so they can be split out into different lines in the line charts
             financialStatsBrokenDown = FinancialStatsHelper.SplitOutFinancialStatsByCategory(financeTypes, aggregatedFinancialStats);
 
+
             //remove categories where the user has never recorded any data
-            financialStatsBrokenDownFiltered = FinancialStatsHelper.RemoveEmptyCategories(financialStatsBrokenDown);
+            //need to take clone of the original dictionary as can't mutate the original version as it's still needed for the goals chart
+            var dictionaryClone = new Dictionary<FinanceType, List<FinancialStat>>(financialStatsBrokenDown);
+            financialStatsBrokenDownFiltered = FinancialStatsHelper.RemoveEmptyCategories(dictionaryClone);
 
             selectedFinanceTypeDescription = financeTypes.FirstOrDefault().FinanceDesc;
             financeTypeSelected = financeTypes.FirstOrDefault();

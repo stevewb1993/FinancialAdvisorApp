@@ -41,11 +41,18 @@ namespace FinancialAdvisorAppUI.FinanceCalculations
 
         public static  Dictionary<FinanceType, List<FinancialStat>> RemoveEmptyCategories(Dictionary<FinanceType, List<FinancialStat>> userFinanceDictionary)
         {
-            Dictionary<FinanceType, List<FinancialStat>> cleanedFinanceStats = userFinanceDictionary;
+            Dictionary<FinanceType, List<FinancialStat>> cleanedFinanceStats = new Dictionary<FinanceType, List<FinancialStat>>();
+
+            foreach(var entry in userFinanceDictionary)
+            {
+                cleanedFinanceStats.Add(entry.Key, entry.Value);
+            }
+
+            cleanedFinanceStats = userFinanceDictionary;
             List<FinanceType> financeTypesToRemove = new List<FinanceType>();
 
             //loopThroughEachCategory
-            foreach (var financeTypeTimeSeries in userFinanceDictionary)
+            foreach (var financeTypeTimeSeries in cleanedFinanceStats)
             {
                 bool allEntriesAreZero = true;
                 //loop through each date to check if there is a non-zero value. As soon as one is found, break from the loop
