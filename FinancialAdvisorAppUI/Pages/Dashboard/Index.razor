@@ -75,7 +75,7 @@ else
                                 <RadzenLineSeries Smooth="@financeTrackerSmooth" Data="@account.Value" CategoryProperty="FinanceDate" Title="@shortTitle" LineType="LineType.Dashed" ValueProperty="FinanceValue">
                                     <RadzenMarkers MarkerType="MarkerType.Square" />
                                 </RadzenLineSeries>
-                                <RadzenCategoryAxis Padding="20" FormatString="{0:MMM yyyy}" />
+                                <RadzenCategoryAxis Padding="20" FormatString="{0:dd MMM yyyy}" />
                                 <RadzenValueAxis Formatter="@FormatAsGBP">
                                     <RadzenGridLines Visible="true" />
                                     <RadzenAxisTitle Text="Value" />
@@ -171,13 +171,21 @@ else
         Console.WriteLine(isExistsFinancialStats);
         loadComplete = true;
 
-        if (isExistsFinancialStats)
+        if (isExistsFinancialStats) //create dashboard charts
         {
+
             fullFinancialStats = (List<FinancialStat>)await _finStatRepo.GetByUserId(Endpoints.FinancialStatsEndpoint, userId);
-            //split out finnace stats into the different classes
-            //currentAccountStats = fullFinancialStats.Where(f => f.FinanceTypeId == 1).ToList();
             financeTypes = (List<FinanceType>)await _finTypeRepo.Get(Endpoints.FinanceTypesEndpoint);
-            financialStatsBrokenDown = financialstatshelper.SplitOutFinancialStatsByCategory(financeTypes, fullFinancialStats);
+
+            //aggregate daily finances of each category
+            var aggregatedFinancialStats = FinancialStatsHelper.AggregateDailyFinancialStatsValue(fullFinancialStats);
+
+            //group the different categories of financial stats so they can be split out into different lines in the line charts
+            financialStatsBrokenDown = FinancialStatsHelper.SplitOutFinancialStatsByCategory(financeTypes, aggregatedFinancialStats);
+
+            //remove categories where the user has never recorded any data
+            financialStatsBrokenDown = FinancialStatsHelper.RemoveEmptyCategories(financialStatsBrokenDown);
+
             selectedFinanceTypeDescription = financeTypes.FirstOrDefault().FinanceDesc;
             financeTypeSelected = financeTypes.FirstOrDefault();
             financialStatsForGoalTracker = financialStatsBrokenDown[financeTypeSelected];
@@ -193,16 +201,20 @@ else
     }
 
 
-    string FormatAsGBP(object value)
+    private string FormatAsGBP(object value)
     {
-        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-GB"));
+        //return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-GB"));
+        //return String.Format(new System.Globalization.CultureInfo("en-GB"), "{0:C}", (double)value);
+        return String.Format(CultureInfo.GetCultureInfo("en-GB"), "{0:C}", (double)value);
     }
 
-    public void UpdateGoalChart()
+    private void UpdateGoalChart()
     {
         financeTypeSelected = financeTypes.Where(f => f.FinanceDesc == selectedFinanceTypeDescription).FirstOrDefault();
         financialStatsForGoalTracker = financialStatsBrokenDown[financeTypeSelected];
         selectedGoals = allGoals.Where(g => g.FinanceType.FinanceDesc == selectedFinanceTypeDescription).ToList();
     }
+
+
 
 }

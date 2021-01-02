@@ -19,9 +19,57 @@ namespace FinancialAdvisorAppUI.FinanceCalculations
             return brokenDownFinanceStats;
         }
 
-        public static List<FinancialStat> AggregateDailyFinancialStats(List<FinancialStat> finstats)
+        public static List<FinancialStat> AggregateDailyFinancialStatsValue(List<FinancialStat> finstats)
         {
-            return null;
+
+            return finstats
+                .GroupBy(g => new
+                    {
+                        g.FinanceDate,
+                        g.FinanceTypeId
+                    })
+                    .Select(g => new FinancialStat
+                    {
+                        FinanceDate = g.Key.FinanceDate,
+                        FinanceTypeId = g.Key.FinanceTypeId,
+                        FinanceValue = g.Sum(x => x.FinanceValue)
+
+                    })
+                    .ToList();
+   
+        }
+
+        public static  Dictionary<FinanceType, List<FinancialStat>> RemoveEmptyCategories(Dictionary<FinanceType, List<FinancialStat>> userFinanceDictionary)
+        {
+            Dictionary<FinanceType, List<FinancialStat>> cleanedFinanceStats = userFinanceDictionary;
+            List<FinanceType> financeTypesToRemove = new List<FinanceType>();
+
+            //loopThroughEachCategory
+            foreach (var financeTypeTimeSeries in userFinanceDictionary)
+            {
+                bool allEntriesAreZero = true;
+                //loop through each date to check if there is a non-zero value. As soon as one is found, break from the loop
+
+                foreach (var finStat in financeTypeTimeSeries.Value)
+                {
+                    if (finStat.FinanceValue != 0)
+                    {
+                        allEntriesAreZero = false;
+                        break;
+                    }
+                }
+                
+                //if all entries were zero, the finance type can be added to the list to remove
+                if (allEntriesAreZero) financeTypesToRemove.Add(financeTypeTimeSeries.Key);
+            }
+
+            //remove the all zero finance types
+            foreach (var financetype in financeTypesToRemove)
+            {
+                cleanedFinanceStats.Remove(financetype);
+            }
+
+            return cleanedFinanceStats;
         }
 
     }
