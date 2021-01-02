@@ -7,9 +7,12 @@ namespace FinancialAdvisorAppUI.Static
 {
     public static class Endpoints
     {
-
+#if DEBUG
         public static string BaseUrl = "https://localhost:44340/";
+#else
 
+
+#endif
         public static string GoalsEndpoint = $"{BaseUrl}api/goals/";
         public static string UserDetailsEndpoint = $"{BaseUrl}api/userdetails/";
         public static string FinanceTypesEndpoint = $"{BaseUrl}api/financetypes/";
