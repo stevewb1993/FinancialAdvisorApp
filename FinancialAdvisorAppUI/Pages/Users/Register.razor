@@ -12,10 +12,20 @@
 {
     <ErrorMessage Message="Something went wrong with the registration attempt"/>
 }
+
+<p class="card-body">
+    Please ensure your password:
+    <ul>
+        <li>Is 6 - 15 characters long</li>
+        <li>Contains at least one lower case character</li>
+        <li>Contains at least one upper case character</li>
+        <li>Contains at least one non-alphanumeric character</li>
+    </ul>
+</p>
+
 <div class="card-body">
     <EditForm Model="Model" OnValidSubmit="HandleRegistration">
         <DataAnnotationsValidator />
-        <ValidationSummary />
         <div class="form-group">
             <label for="email">Email Address</label>
             <InputText Id="email" class="form-control" @bind-Value="Model.EmailAddress" />

@@ -15,6 +15,7 @@ namespace FinancialAdvisorAppUI.Models
         [Required]
         [DataType(DataType.Password)]
         [StringLength(15, ErrorMessage = "Your Password is limited to {2} to {1} characters", MinimumLength = 6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,15}$", ErrorMessage = "Your password does not meet the complexity requirements")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
