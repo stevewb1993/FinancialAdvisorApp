@@ -31,9 +31,9 @@ namespace FinancialAdvisorAppAPI.Controllers
         
         
         //Gets
-        public async Task<IActionResult> GetRecordById<dto>(int Id, ControllerContext controllerContext) where dto : DTOBase
+        public virtual async Task<IActionResult> GetRecordById<dto>(int Id, ControllerContext controllerContext) where dto : DTOBase
         {
-
+            
             string location = GetControllerActionNames(controllerContext);
             try
             {
@@ -79,7 +79,7 @@ namespace FinancialAdvisorAppAPI.Controllers
         }
 
         //Posts / Creates
-        public async Task<IActionResult> Create([FromBody] DTOBase Dto, ControllerContext controllerContext)
+        public virtual async Task<IActionResult> Create([FromBody] DTOBase Dto, ControllerContext controllerContext)
         {
             string location = GetControllerActionNames(controllerContext);
             try
@@ -114,7 +114,7 @@ namespace FinancialAdvisorAppAPI.Controllers
 
         //Puts / Updates
 
-        public async Task<IActionResult> UpdateRecordById(int Id, DTOBase dto, ControllerContext controllerContext)
+        public virtual async Task<IActionResult> UpdateRecordById(int Id, DTOBase dto, ControllerContext controllerContext)
         {
             string location = GetControllerActionNames(controllerContext);
             try
@@ -201,6 +201,23 @@ namespace FinancialAdvisorAppAPI.Controllers
             _logger.LogError(message);
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
+
+        public int GetUserIdFromClaims(ControllerContext controllerContext)
+        {
+            try
+            {
+                int userId = int.Parse(controllerContext.HttpContext.User.Claims.Where(c => c.Type == "FriendlyUserId").FirstOrDefault().Value);
+                return userId;
+            }
+            catch (Exception e)
+            {
+                return -1;
+            }
+            
+        }
+
+        
+
 
     }
 }

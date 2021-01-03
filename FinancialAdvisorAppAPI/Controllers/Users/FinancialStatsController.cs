@@ -128,33 +128,5 @@ namespace FinancialAdvisorAppAPI.Controllers.Users
         {
             return await _helperFunctions.Create(financialStatDTO, ControllerContext);
         }
-
-        //public async Task<IActionResult> GetRecordsByUserIdAndDate(FinancialStatDTO financialStatDTO)
-        //{
-        //    int userId = financialStatDTO.UserId;
-        //    DateTime financeDate = financialStatDTO.FinanceDate;
-        //    
-        //    string location = _helperFunctions.GetControllerActionNames(ControllerContext);
-        //    try
-        //    {
-        //        _logger.LogInfo($"{location}: Attempted Call for id: {userId}");
-        //        var recordList = await _financialStatRepository.FindAllByUserId(userId, financeDate);
-        //        if (recordList == null || recordList.Count == 0)
-        //        {
-        //            _logger.LogWarn($"{location}: Failed to retrieve record with id: {userId}");
-        //            return NotFound();
-        //        }
-        //
-        //        var response = _mapper.Map<IList<FinancialStatDTO>>(recordList);
-        //        _logger.LogInfo($"{location}: Successfully got record with id: {userId}");
-        //        return Ok(response);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return _helperFunctions.ReturnInternalError(e, ControllerContext);
-        //    }
-        //}
-
-
     }
 }
